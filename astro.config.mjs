@@ -1,6 +1,6 @@
 import mdx from "@astrojs/mdx";
-import react from "@astrojs/react";
 import netlify from "@astrojs/netlify";
+import react from "@astrojs/react";
 import sitemap from "@inox-tools/sitemap-ext";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
@@ -55,28 +55,32 @@ export default defineConfig({
         output: {
           manualChunks(id) {
             // Split highlight.js into its own chunk
-            if (id.includes('highlight.js') || id.includes('highlight.esm')) {
-              return 'highlight';
+            if (id.includes("highlight.js") || id.includes("highlight.esm")) {
+              return "highlight";
             }
             // Split reveal.js and its plugins
-            if (id.includes('reveal.js')) {
-              return 'reveal';
+            if (id.includes("reveal.js")) {
+              return "reveal";
             }
             // Split React and related packages
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'react';
+            if (id.includes("react") || id.includes("react-dom")) {
+              return "react";
             }
             // Split UI libraries
-            if (id.includes('lucide-react') || id.includes('clsx') || id.includes('tailwind-merge')) {
-              return 'ui';
+            if (
+              id.includes("lucide-react") ||
+              id.includes("clsx") ||
+              id.includes("tailwind-merge")
+            ) {
+              return "ui";
             }
             // Split animation libraries
-            if (id.includes('animejs')) {
-              return 'animation';
+            if (id.includes("animejs")) {
+              return "animation";
             }
             // Split image processing
-            if (id.includes('@vercel/og')) {
-              return 'image';
+            if (id.includes("@vercel/og")) {
+              return "image";
             }
           },
         },
