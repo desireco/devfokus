@@ -1,2 +1,2 @@
-# devfokus
-Dev fokus dev portal
+# devFokus
+devFokus developer portal
