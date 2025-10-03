@@ -49,6 +49,39 @@ export default defineConfig({
           openAnalyzer: false,
         }),
     ].filter(Boolean),
+    build: {
+      chunkSizeWarningLimit: 1000, // Increase warning limit to 1MB
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            // Split highlight.js into its own chunk
+            if (id.includes('highlight.js') || id.includes('highlight.esm')) {
+              return 'highlight';
+            }
+            // Split reveal.js and its plugins
+            if (id.includes('reveal.js')) {
+              return 'reveal';
+            }
+            // Split React and related packages
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'react';
+            }
+            // Split UI libraries
+            if (id.includes('lucide-react') || id.includes('clsx') || id.includes('tailwind-merge')) {
+              return 'ui';
+            }
+            // Split animation libraries
+            if (id.includes('animejs')) {
+              return 'animation';
+            }
+            // Split image processing
+            if (id.includes('@vercel/og')) {
+              return 'image';
+            }
+          },
+        },
+      },
+    },
   },
   security: {
     checkOrigin: false,
