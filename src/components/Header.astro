@@ -1,6 +1,5 @@
 ---
 import { Search } from "lucide-react";
-import BetaBadge from "@/components/BetaBadge.astro";
 import { getNavigationItems, SITE_TITLE } from "../consts";
 import HeaderLink from "./HeaderLink.astro";
 
@@ -25,9 +24,6 @@ const visibleMenuItems = getNavigationItems();
             class="font-noto-serif text-xl font-bold text-teahouse-dark font-['Noto_Serif_SC',_'Noto_Serif_SC_Fallback',_serif]"
           >
             {SITE_TITLE}
-          </div>
-          <div class="flex justify-end mt-1">
-            <BetaBadge />
           </div>
         </div>
       </a>
