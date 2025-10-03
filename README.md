@@ -1,6 +1,6 @@
-# devfokus
+# devFokus
 
-Dev fokus dev portal - An Astro site based on the MonaKit template featuring multi-format content including knowledge cards, articles, and slide presentations.
+devFokus developer portal - An Astro site featuring multi-format content including knowledge cards, articles, and slide presentations.
 
 ## Features
 

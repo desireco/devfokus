@@ -45,10 +45,10 @@ export interface SlideTheme {
   overlayColor: string;
 }
 
-export const SITE_TITLE = "MONA";
-export const SITE_DESCRIPTION = "Mona — Learn from What We Build";
+export const SITE_TITLE = "devFokus";
+export const SITE_DESCRIPTION = "devFokus — Developer Portal";
 
-export const PROD_URL = "https://www.mymona.xyz";
+export const PROD_URL = "https://www.devfokus.com";
 
 export const isProdEnv = () => {
   if (import.meta.env?.PROD || import.meta.env?.MODE === "production") {
@@ -104,7 +104,7 @@ export const MENU_ITEMS: MenuItem[] = [
   {
     id: "open-source",
     label: "GitHub",
-    href: "https://github.com/monakit/monakit",
+    href: "https://github.com/desireco/devfokus",
     title: "GitHub",
     description: "Explore our open-source projects.",
   },
