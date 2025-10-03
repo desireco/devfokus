@@ -1,6 +1,6 @@
 import mdx from "@astrojs/mdx";
 import react from "@astrojs/react";
-import vercel from "@astrojs/vercel";
+import netlify from "@astrojs/netlify";
 import sitemap from "@inox-tools/sitemap-ext";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
@@ -18,7 +18,7 @@ export default defineConfig({
   image: {
     domains: ["public-files.gumroad.com"],
   },
-  adapter: vercel({
+  adapter: netlify({
     imageService: true,
   }),
   site: env().SITE_URL,
