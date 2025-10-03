@@ -1,0 +1,92 @@
+---
+import ScrollingTags from "./ScrollingTags.astro";
+
+export interface Props {
+  uniqueTags: string[];
+}
+
+const { uniqueTags } = Astro.props;
+---
+
+<section
+  class="relative h-[calc(100vh-4rem)] overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+>
+  <div
+    class="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)] animate-pulse"
+  >
+  </div>
+
+  <ScrollingTags uniqueTags={uniqueTags} />
+
+  <div
+    class="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"
+  >
+  </div>
+  <div
+    class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000"
+  >
+  </div>
+  <div
+    class="absolute top-1/2 right-1/3 w-64 h-64 bg-purple-500/10 rounded-full blur-2xl animate-pulse delay-2000"
+  >
+  </div>
+
+  <div
+    class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-full flex items-center pointer-events-none"
+  >
+    <div class="text-center w-full">
+      <div
+        class="flex flex-col justify-center items-center pointer-events-auto"
+        id="mona-text"
+      >
+        <h1
+          class="mb-4 text-5xl font-bold tracking-tight text-white sm:text-7xl"
+        >
+          <span class="text-primary text-glow animate-pulse">Mona</span> — Learn from What
+          We Build
+        </h1>
+
+        <p class="mx-auto max-w-3xl text-xl text-white leading-relaxed">
+          Practical
+          <span class="text-nebula"> insights</span>,{" "}
+          <span class="text-solar">concise notes</span>{" "}
+          and{" "}
+          <span class="text-cosmic"> hands-on guides </span>{
+            " "
+          }
+          — created by developers, for developers.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { createTimeline, stagger, text } from "animejs";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const monaElement = document.getElementById("mona-text");
+    if (monaElement) {
+      const { chars } = text.split(monaElement, {
+        words: false,
+        chars: true,
+      });
+      createTimeline({
+        loop: false,
+        defaults: { ease: "inOut(3)", duration: 1500 },
+      })
+        .add(
+          chars,
+          {
+            y: [($el) => (+$el.dataset.line % 2 ? "100%" : "-200%"), "0%"],
+            opacity: [0, 1],
+          },
+          stagger(10, { from: "random" })
+        )
+        .init()
+        .then(() => {
+          document.dispatchEvent(new Event("start-tags"));
+        });
+    }
+  });
+</script>
