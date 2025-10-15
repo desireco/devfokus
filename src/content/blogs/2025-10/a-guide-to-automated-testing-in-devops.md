@@ -1,7 +1,7 @@
 ---
 title: 'A Guide to Automated Testing in DevOps: From Unit Tests to End-to-End'
 description: 'A comprehensive guide to the different layers of automated testing in a DevOps workflow, including unit, integration, and end-to-end tests, and how to build a balanced test suite.'
-publishDate: '2025-10-14'
+pubDate: '2025-10-14'
 category: 'devops'
 difficulty: 'beginner'
 author: 'Jake Dakich'

@@ -23,9 +23,9 @@ export const CategoryMetadata = PageBaseMetadata.extend({
   targetAudience: z.array(z.string()).default([]),
 
   // Related content
-  relatedCategories: z.array(z.reference("categories")).default([]),
+  relatedCategories: z.array(z.string()).default([]),
 
   // Optional: Reference to topics in this category
   // This would be useful for bidirectional relationships
-  featuredTopics: z.array(z.reference("topics")).default([]),
+  featuredTopics: z.array(z.string()).default([]),
 });

@@ -30,7 +30,7 @@ const slides = defineCollection({
 });
 
 const topics = defineCollection({
-  loader: glob({ base: "./src/content/topic", pattern: "**/*.{md,mdx}" }),
+  loader: glob({ base: "./src/content/topics", pattern: "**/*.{md,mdx}" }),
   schema: TopicMetadata,
 });
 

@@ -27,15 +27,15 @@ export const StructuredDataSchema = z.object({
 export const TopicMetadata = PageBaseMetadata.extend({
   // Basic categorization
   tags: z.array(z.string()).default([]),
-  category: z.reference("categories").optional(),
+  category: z.string().optional(),
 
   // Content metadata
   excerpt: z.string().optional(),
   slug: z.string().optional(),
 
   // Target audience and difficulty
-  difficulty: z.enum(["beginner", "intermediate", "advanced"]).optional(),
-  difficultyLevel: z.enum(["beginner", "intermediate", "advanced"]).optional(),
+  difficulty: z.string().optional(),
+  difficultyLevel: z.string().optional(),
   targetAudience: z.array(z.string()).default([]),
   prerequisites: z.array(z.string()).default([]),
 
@@ -44,7 +44,7 @@ export const TopicMetadata = PageBaseMetadata.extend({
   readTime: z.number().int().positive().optional(),
 
   // Visual elements
-  image: z.string().url().optional(),
+  image: z.string().optional(),
   icon: z.string().optional(),
   color: z.string().optional(),
 
@@ -60,7 +60,7 @@ export const TopicMetadata = PageBaseMetadata.extend({
   relatedPosts: z.array(z.string()).default([]),
   relatedServices: z.array(z.string()).default([]),
   services: z.array(z.string()).default([]),
-  relatedCategories: z.array(z.reference("categories")).default([]),
+  relatedCategories: z.array(z.string()).default([]),
 
   // SEO optimization
   meta: SEOMetadata.optional(),

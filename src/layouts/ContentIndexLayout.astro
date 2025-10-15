@@ -9,10 +9,10 @@ import { paginate } from "../lib/pagination";
 import MainLayout from "./MainLayout.astro";
 
 interface Props {
-    collectionType: "blogs" | "cards" | "slides";
-    title: string;
-    description: string;
-    defaultLimit: number;
+  collectionType: "blogs" | "cards" | "slides";
+  title: string;
+  description: string;
+  defaultLimit: number;
 }
 
 const { collectionType, title, description, defaultLimit } = Astro.props;
@@ -25,35 +25,35 @@ const sourceItems = await getCollection(collectionType);
 
 const tags = sourceItems.flatMap((item) => item.data.tags || []);
 const tagCounts = tags.reduce(
-    (acc, currentTag) => {
-        acc[currentTag] = (acc[currentTag] || 0) + 1;
-        return acc;
-    },
-    {} as Record<string, number>,
+  (acc, currentTag) => {
+    acc[currentTag] = (acc[currentTag] || 0) + 1;
+    return acc;
+  },
+  {} as Record<string, number>,
 );
 
 const tagList = Object.entries(tagCounts)
-    .sort(([, a], [, b]) => (b as number) - (a as number))
-    .map(([tag, count]) => ({
-        tag,
-        count: count as number,
-        size: Math.max(
-            1,
-            Math.min(
-                4,
-                Math.ceil(
-                    ((count as number) * 4) /
-                        Math.max(...(Object.values(tagCounts) as number[])),
-                ),
-            ),
+  .sort(([, a], [, b]) => (b as number) - (a as number))
+  .map(([tag, count]) => ({
+    tag,
+    count: count as number,
+    size: Math.max(
+      1,
+      Math.min(
+        4,
+        Math.ceil(
+          ((count as number) * 4) /
+            Math.max(...(Object.values(tagCounts) as number[])),
         ),
-    }));
+      ),
+    ),
+  }));
 
 let allItems: typeof sourceItems;
 if (tag) {
-    allItems = sourceItems.filter((item) => item.data.tags?.includes(tag));
+  allItems = sourceItems.filter((item) => item.data.tags?.includes(tag));
 } else {
-    allItems = sourceItems;
+  allItems = sourceItems;
 }
 
 const sortedItems = allItems.sort(
@@ -63,18 +63,18 @@ const paginatedItems = paginate(sortedItems, page, limit);
 const pageTitle = `${title} - Page ${page} | ${SITE_TITLE}`;
 
 const items = paginatedItems.items.map((item) => {
-    if (collectionType === "blogs") {
-        return {
-            id: item.id,
-            ...item.data,
-        };
-    } else {
-        const { ...itemDataWithoutId } = item.data;
-        return {
-            id: item.id,
-            ...itemDataWithoutId,
-        };
-    }
+  if (collectionType === "blogs") {
+    return {
+      id: item.id,
+      ...item.data,
+    };
+  } else {
+    const { ...itemDataWithoutId } = item.data;
+    return {
+      id: item.id,
+      ...itemDataWithoutId,
+    };
+  }
 });
 ---
 
