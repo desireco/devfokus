@@ -80,14 +80,6 @@ export interface MenuItem {
 
 export const MENU_ITEMS: MenuItem[] = [
   {
-    id: "blogs",
-    label: "Articles",
-    href: "/blogs",
-    title: "Articles",
-    description:
-      "Practical guides, in-depth technical pieces, and lessons from real projects.",
-  },
-  {
     id: "topics",
     label: "Topics",
     href: "/topics",
@@ -102,27 +94,6 @@ export const MENU_ITEMS: MenuItem[] = [
     title: "Categories",
     description:
       "Browse our organized content categories. Each category contains curated topics and learning paths.",
-  },
-  {
-    id: "cards",
-    label: "Cards",
-    href: "/cards",
-    title: "Cards",
-    description: "Developer-Gathered, AI-Crafted, Human-Checked.",
-  },
-  {
-    id: "slides",
-    label: "Slides",
-    href: "/slides",
-    title: "Slides",
-    description: "Interactive presentations crafted for developers.",
-  },
-  {
-    id: "open-source",
-    label: "GitHub",
-    href: "https://github.com/desireco/devfokus",
-    title: "GitHub",
-    description: "Explore our open-source projects.",
   },
 ];
 

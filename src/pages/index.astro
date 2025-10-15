@@ -1,59 +1,65 @@
 ---
 import { getCollection } from "astro:content";
-import BlogCard from "@/components/blog/BlogCard.astro";
-import CardCover from "@/components/knowledge-card/CardCover.astro";
+import CategoryCard from "@/components/category/CategoryCard.astro";
+import TopicCard from "@/components/topic/TopicCard.astro";
 import HeroSection from "@/components/landing-page/HeroSection.astro";
 import LatestSection from "@/components/landing-page/LatestSection.astro";
-import SlideCard from "@/components/slide/SlideCard.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/consts";
 import MainLayout from "@/layouts/MainLayout.astro";
 
-const allPosts = (await getCollection("blogs"))
-  .map((post) => ({
-    id: post.id,
-    title: post.data.title,
-    description: post.data.description,
-    pubDate: post.data.pubDate,
-    tags: post.data.tags,
-    updatedDate: post.data.updatedDate,
-    author: post.data.author,
-    metadata: post.data.metadata,
+const allCategories = (await getCollection("categories"))
+  .map((category) => ({
+    id: category.id,
+    title: category.data.title,
+    description: category.data.description,
+    slug: category.data.slug,
+    icon: category.data.icon,
+    color: category.data.color,
+    featured: category.data.featured,
+    order: category.data.order,
+    targetAudience: category.data.targetAudience,
+    relatedCategories: category.data.relatedCategories,
+    featuredTopics: category.data.featuredTopics,
+    publishDate: category.data.publishDate,
+    updatedDate: category.data.updatedDate,
   }))
-  .sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf());
+  .sort((a, b) => (a.order || 999) - (b.order || 999));
 
-const allCards = (await getCollection("cards"))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .map((card) => ({
-    id: card.id,
-    title: card.data.title,
-    template: card.data.template,
-    tags: card.data.tags,
-  }));
-
-const allSlides = (await getCollection("slides"))
-  .filter((slide) => slide.data.pubDate) // Filter out slides without pubDate
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .map((slide) => ({
-    id: slide.id,
-    title: slide.data.title,
-    description: slide.data.description,
-    author: slide.data.author,
-    transition: slide.data.transition,
-    theme: slide.data.theme,
-    pubDate: slide.data.pubDate,
-    tags: slide.data.tags,
-  }));
+const allTopics = (await getCollection("topics"))
+  .map((topic) => ({
+    id: topic.id,
+    title: topic.data.title,
+    description: topic.data.description,
+    publishDate: topic.data.publishDate,
+    updatedDate: topic.data.updatedDate,
+    excerpt: topic.data.excerpt,
+    difficulty: topic.data.difficulty,
+    difficultyLevel: topic.data.difficultyLevel,
+    targetAudience: topic.data.targetAudience,
+    prerequisites: topic.data.prerequisites,
+    estimatedReadingTime: topic.data.estimatedReadingTime,
+    readTime: topic.data.readTime,
+    image: topic.data.image,
+    icon: topic.data.icon,
+    color: topic.data.color,
+    featured: topic.data.featured,
+    author: topic.data.author,
+    tags: topic.data.tags,
+    category: topic.data.category,
+    relatedTopics: topic.data.relatedTopics,
+    relatedPosts: topic.data.relatedPosts,
+    relatedCategories: topic.data.relatedCategories,
+  }))
+  .sort((a, b) => new Date(b.publishDate).valueOf() - new Date(a.publishDate).valueOf());
 
 const allTags = [
-  ...allPosts.flatMap((post) => post.tags || []),
-  ...allCards.flatMap((card) => card.tags || []),
-  ...allSlides.flatMap((slide) => slide.tags || []),
+  ...allCategories.flatMap((category) => category.targetAudience || []),
+  ...allTopics.flatMap((topic) => topic.tags || []),
 ];
 const uniqueTags = [...new Set(allTags)];
 
-const posts = allPosts.slice(0, 3);
-const cards = allCards.slice(0, 9);
-const slides = allSlides.slice(0, 6);
+const featuredCategories = allCategories.filter(category => category.featured).slice(0, 6);
+const featuredTopics = allTopics.filter(topic => topic.featured).slice(0, 6);
 ---
 
 <MainLayout
@@ -65,51 +71,25 @@ const slides = allSlides.slice(0, 6);
 
     <div class="px-4 md:px-6">
         <LatestSection
-            title="Articles"
-            accentColor="text-nebula"
-            description="Fresh insights and lessons from our recent explorations."
-            viewAllHref="/blogs"
-            viewAllText="View All Articles"
-            viewAllButtonWidth="165px"
+            title="Featured Categories"
+            accentColor="text-emerald-400"
+            description="Explore our curated learning paths and organized content categories."
+            viewAllHref="/categories"
+            viewAllText="View All Categories"
+            viewAllButtonWidth="180px"
         >
-            {posts.map((blog) => <BlogCard blog={blog} />)}
+            {featuredCategories.map((category) => <CategoryCard category={category} />)}
         </LatestSection>
 
         <LatestSection
-            title="Cards"
-            accentColor="text-solar"
-            description="Check out our quick notes and summaries"
-            viewAllHref="/cards"
-            viewAllText="View All Cards"
-            viewAllButtonWidth="154px"
-        >
-            {
-                cards.map((card) => (
-                    <a href={`/cards/${card.id}`}>
-                        <CardCover
-                            title={card.title}
-                            template={card.template}
-                        />
-                    </a>
-                ))
-            }
-        </LatestSection>
-
-        <LatestSection
-            title="Slides"
-            accentColor="text-cosmic"
-            description="Interactive presentations crafted for developers."
-            viewAllHref="/slides"
-            viewAllText="View All Slides"
+            title="Featured Topics"
+            accentColor="text-blue-400"
+            description="Dive deep into our most popular and comprehensive learning topics."
+            viewAllHref="/topics"
+            viewAllText="View All Topics"
             viewAllButtonWidth="155px"
         >
-            {
-                slides.map((slide) => (
-                    <a href={`/slides/${slide.id}`}>
-                        <SlideCard slide={slide} />
-                    </a>
-                ))
-            }
+            {featuredTopics.map((topic) => <TopicCard topic={topic} />)}
         </LatestSection>
     </div>
 </MainLayout>
