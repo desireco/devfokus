@@ -18,9 +18,12 @@ export function getAdjacentContent(
   currentId: string,
 ): AdjacentContent {
   // Sort by publication date (newest first)
-  const sortedItems = items.sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-  );
+  // Handle cases where pubDate might be undefined by treating them as very old dates
+  const sortedItems = items.sort((a, b) => {
+    const dateA = a.data.pubDate ? a.data.pubDate.valueOf() : 0;
+    const dateB = b.data.pubDate ? b.data.pubDate.valueOf() : 0;
+    return dateB - dateA;
+  });
 
   const currentIndex = sortedItems.findIndex((item) => item.id === currentId);
 

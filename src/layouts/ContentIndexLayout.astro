@@ -2,6 +2,8 @@
 import { getCollection } from "astro:content";
 import BlogsPage from "@/components/blog/BlogsPage.astro";
 import CardsPage from "@/components/knowledge-card/CardsPage.astro";
+import TopicsPage from "@/components/topic/TopicsPage.astro";
+import CategoriesPage from "@/components/category/CategoriesPage.astro";
 import type { Slide } from "@/components/slide/SlideCard.astro";
 import SlidesPage from "@/components/slide/SlidesPage.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
@@ -9,10 +11,10 @@ import { paginate } from "../lib/pagination";
 import MainLayout from "./MainLayout.astro";
 
 interface Props {
-  collectionType: "blogs" | "cards" | "slides";
-  title: string;
-  description: string;
-  defaultLimit: number;
+    collectionType: "blogs" | "cards" | "slides" | "topics" | "categories";
+    title: string;
+    description: string;
+    defaultLimit: number;
 }
 
 const { collectionType, title, description, defaultLimit } = Astro.props;
@@ -25,56 +27,83 @@ const sourceItems = await getCollection(collectionType);
 
 const tags = sourceItems.flatMap((item) => item.data.tags || []);
 const tagCounts = tags.reduce(
-  (acc, currentTag) => {
-    acc[currentTag] = (acc[currentTag] || 0) + 1;
-    return acc;
-  },
-  {} as Record<string, number>,
+    (acc, currentTag) => {
+        acc[currentTag] = (acc[currentTag] || 0) + 1;
+        return acc;
+    },
+    {} as Record<string, number>,
 );
 
 const tagList = Object.entries(tagCounts)
-  .sort(([, a], [, b]) => (b as number) - (a as number))
-  .map(([tag, count]) => ({
-    tag,
-    count: count as number,
-    size: Math.max(
-      1,
-      Math.min(
-        4,
-        Math.ceil(
-          ((count as number) * 4) /
-            Math.max(...(Object.values(tagCounts) as number[])),
+    .sort(([, a], [, b]) => (b as number) - (a as number))
+    .map(([tag, count]) => ({
+        tag,
+        count: count as number,
+        size: Math.max(
+            1,
+            Math.min(
+                4,
+                Math.ceil(
+                    ((count as number) * 4) /
+                        Math.max(...(Object.values(tagCounts) as number[])),
+                ),
+            ),
         ),
-      ),
-    ),
-  }));
+    }));
 
 let allItems: typeof sourceItems;
 if (tag) {
-  allItems = sourceItems.filter((item) => item.data.tags?.includes(tag));
+    allItems = sourceItems.filter((item) => item.data.tags?.includes(tag));
 } else {
-  allItems = sourceItems;
+    allItems = sourceItems;
 }
 
-const sortedItems = allItems.sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const sortedItems = allItems.sort((a, b) => {
+    const dateA = a.data.pubDate || a.data.publishDate;
+    const dateB = b.data.pubDate || b.data.publishDate;
+
+    // Handle items without dates - put them at the end
+    if (!dateA && !dateB) return 0;
+    if (!dateA) return 1;
+    if (!dateB) return -1;
+
+    // Ensure we have valid Date objects
+    const dateAValue = new Date(dateA);
+    const dateBValue = new Date(dateB);
+
+    // Additional check for invalid dates
+    if (isNaN(dateAValue.getTime()) && isNaN(dateBValue.getTime())) return 0;
+    if (isNaN(dateAValue.getTime())) return 1;
+    if (isNaN(dateBValue.getTime())) return -1;
+
+    return dateBValue.getTime() - dateAValue.getTime();
+});
 const paginatedItems = paginate(sortedItems, page, limit);
 const pageTitle = `${title} - Page ${page} | ${SITE_TITLE}`;
 
 const items = paginatedItems.items.map((item) => {
-  if (collectionType === "blogs") {
-    return {
-      id: item.id,
-      ...item.data,
-    };
-  } else {
-    const { ...itemDataWithoutId } = item.data;
-    return {
-      id: item.id,
-      ...itemDataWithoutId,
-    };
-  }
+    if (collectionType === "blogs") {
+        return {
+            id: item.id,
+            ...item.data,
+        };
+    } else if (collectionType === "topics") {
+        return {
+            id: item.id,
+            ...item.data,
+        };
+    } else if (collectionType === "categories") {
+        return {
+            id: item.id,
+            ...item.data,
+        };
+    } else {
+        const { ...itemDataWithoutId } = item.data;
+        return {
+            id: item.id,
+            ...itemDataWithoutId,
+        };
+    }
 });
 ---
 
@@ -99,6 +128,20 @@ const items = paginatedItems.items.map((item) => {
             <SlidesPage
                 slides={items as Slide[]}
                 tags={tagList}
+                tag={tag || ""}
+            />
+        )
+    }
+    {
+        collectionType === "topics" && (
+            <TopicsPage topics={items} allTags={tagList} tag={tag || ""} />
+        )
+    }
+    {
+        collectionType === "categories" && (
+            <CategoriesPage
+                categories={items}
+                allTags={tagList}
                 tag={tag || ""}
             />
         )

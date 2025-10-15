@@ -88,6 +88,22 @@ export const MENU_ITEMS: MenuItem[] = [
       "Practical guides, in-depth technical pieces, and lessons from real projects.",
   },
   {
+    id: "topics",
+    label: "Topics",
+    href: "/topics",
+    title: "Topics",
+    description:
+      "In-depth guides and tutorials organized by topic. Learn at your own pace with structured content.",
+  },
+  {
+    id: "categories",
+    label: "Categories",
+    href: "/categories",
+    title: "Categories",
+    description:
+      "Browse our organized content categories. Each category contains curated topics and learning paths.",
+  },
+  {
     id: "cards",
     label: "Cards",
     href: "/cards",

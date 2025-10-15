@@ -1,0 +1,36 @@
+---
+import { getCollection, getEntry, render } from "astro:content";
+import sitemap from "sitemap-ext:config";
+import CategoryPost from "../../layouts/CategoryPost.astro";
+
+// add all categories to sitemap
+sitemap(async ({ addToSitemap }) => {
+  const categories = await getCollection("categories");
+
+  addToSitemap(
+    categories.map((category) => ({
+      slug: category.id,
+    })),
+  );
+});
+
+const { slug } = Astro.params;
+if (slug === undefined) {
+  return new Response(null, {
+    status: 400,
+    statusText: "Bad Request: Slug is missing",
+  });
+}
+
+const category = await getEntry("categories", slug);
+
+if (!category) {
+  return Astro.redirect("/404");
+}
+
+const { Content } = await render(category);
+---
+
+<CategoryPost {...category.data} id={category.id}>
+  <Content />
+</CategoryPost>

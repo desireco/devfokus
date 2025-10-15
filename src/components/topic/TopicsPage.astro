@@ -1,0 +1,61 @@
+---
+import TagFilter from "../TagFilter.astro";
+import TopicCard, { type Topic } from "./TopicCard.astro";
+
+interface Tag {
+  tag: string;
+  count?: number;
+  size: number;
+}
+
+interface Props {
+  topics: Topic[];
+  allTags: Tag[];
+  tag?: string | null;
+}
+
+const { topics, allTags, tag } = Astro.props;
+---
+
+<div>
+  <TagFilter tags={allTags} currentTag={tag} type="topics" />
+
+  <!-- Featured topics section -->
+  {tag === null && topics.filter(topic => topic.featured).length > 0 && (
+    <section class="mb-8">
+      <h2 class="text-2xl font-bold text-slate-300 mb-4">Featured Topics</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {topics.filter(topic => topic.featured).map((topic) => (
+          <TopicCard topic={topic} />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- All topics section -->
+  <section>
+    {tag && (
+      <h2 class="text-xl font-semibold text-slate-300 mb-4">
+        Topics tagged with "{tag}"
+      </h2>
+    )}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {topics
+        .filter(topic => tag === null || !tag || topic.tags?.includes(tag))
+        .map((topic) => (
+          <TopicCard topic={topic} />
+        ))}
+    </div>
+  </section>
+
+  {topics.length === 0 && (
+    <div class="text-center py-12">
+      <div class="text-gray-500 text-lg">No topics found</div>
+      {tag && (
+        <a href="/topics" class="mt-4 inline-block text-emerald-400 hover:text-emerald-300">
+          Clear filter and view all topics
+        </a>
+      )}
+    </div>
+  )}
+</div>

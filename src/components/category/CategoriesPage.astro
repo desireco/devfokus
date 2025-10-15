@@ -1,0 +1,110 @@
+---
+import TagFilter from "../TagFilter.astro";
+import CategoryCard, { type Category } from "./CategoryCard.astro";
+
+interface Tag {
+  tag: string;
+  count?: number;
+  size: number;
+}
+
+interface Props {
+  categories: Category[];
+  allTags: Tag[];
+  tag?: string | null;
+}
+
+const { categories, allTags, tag } = Astro.props;
+
+// Sort categories: featured first, then by order, then alphabetically
+const sortedCategories = categories.sort((a, b) => {
+  // Featured categories first
+  if (a.featured && !b.featured) return -1;
+  if (!a.featured && b.featured) return 1;
+
+  // Then by order (if specified)
+  if (a.order !== undefined && b.order !== undefined) {
+    return a.order - b.order;
+  }
+  if (a.order !== undefined) return -1;
+  if (b.order !== undefined) return 1;
+
+  // Finally alphabetically
+  return a.title.localeCompare(b.title);
+});
+
+const featuredCategories = sortedCategories.filter(cat => cat.featured);
+const regularCategories = sortedCategories.filter(cat => !cat.featured);
+---
+
+<div>
+  <TagFilter tags={allTags} currentTag={tag} type="categories" />
+
+  <!-- Featured Categories Section -->
+  {tag === null && featuredCategories.length > 0 && (
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold text-slate-300 mb-6 text-center">Featured Categories</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {featuredCategories.map((category) => (
+          <CategoryCard category={category} />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- All Categories Section -->
+  <section>
+    {tag && (
+      <h2 class="text-2xl font-semibold text-slate-300 mb-6 text-center">
+        Categories tagged with "{tag}"
+      </h2>
+    )}
+
+    {tag === null && regularCategories.length > 0 && featuredCategories.length > 0 && (
+      <h2 class="text-2xl font-semibold text-slate-300 mb-6 text-center">All Categories</h2>
+    )}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {sortedCategories
+        .filter(category => tag === null || !tag || category.slug.includes(tag) || category.title.toLowerCase().includes(tag.toLowerCase()))
+        .map((category) => (
+          <CategoryCard category={category} />
+        ))}
+    </div>
+  </section>
+
+  {categories.length === 0 && (
+    <div class="text-center py-12">
+      <div class="text-gray-500 text-lg mb-4">No categories found</div>
+      {tag && (
+        <a href="/categories" class="inline-block text-emerald-400 hover:text-emerald-300">
+          Clear filter and view all categories
+        </a>
+      )}
+    </div>
+  )}
+
+  <!-- Category Overview Stats -->
+  {tag === null && categories.length > 0 && (
+    <section class="mt-12 text-center">
+      <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <div class="text-2xl font-bold text-emerald-400">{categories.length}</div>
+            <div class="text-sm text-slate-400">Total Categories</div>
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-amber-400">{featuredCategories.length}</div>
+            <div class="text-sm text-slate-400">Featured Categories</div>
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-blue-400">
+              {categories.reduce((acc, cat) => acc + (cat.featuredTopics?.length || 0), 0)}
+            </div>
+            <div class="text-sm text-slate-400">Featured Topics</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+</div>

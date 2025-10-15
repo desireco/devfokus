@@ -1,0 +1,207 @@
+---
+import { Image } from "astro:assets";
+import ShareButtons from "../ShareButtons.astro";
+
+export interface Topic {
+  id: string;
+  title: string;
+  description?: string;
+  publishDate: Date | string;
+  updatedDate?: Date | string;
+  excerpt?: string;
+  difficulty?: string;
+  difficultyLevel?: string;
+  targetAudience?: string[];
+  prerequisites?: string[];
+  estimatedReadingTime?: number;
+  readTime?: number;
+  image?: string;
+  icon?: string;
+  color?: string;
+  featured?: boolean;
+  author?: string;
+  tags?: string[];
+  category?: string;
+  relatedTopics?: string[];
+  relatedPosts?: string[];
+  relatedCategories?: string[];
+}
+
+interface Props {
+  topic: Topic;
+}
+
+const origin = Astro.url.origin;
+const { topic } = Astro.props;
+
+const url = `${origin}/topics/${topic.id}`;
+
+function getDifficultyColor(difficulty?: string) {
+  if (!difficulty) return "from-gray-500/20 to-gray-600/20";
+
+  switch (difficulty.toLowerCase()) {
+    case "beginner":
+      return "from-green-500/20 to-green-600/20";
+    case "intermediate":
+      return "from-amber-500/20 to-amber-600/20";
+    case "advanced":
+      return "from-red-500/20 to-red-600/20";
+    default:
+      return "from-blue-500/20 to-blue-600/20";
+  }
+}
+
+function getDifficultyBadgeColor(difficulty?: string) {
+  if (!difficulty) return "bg-gray-600 text-white";
+
+  switch (difficulty.toLowerCase()) {
+    case "beginner":
+      return "bg-green-600 text-white";
+    case "intermediate":
+      return "bg-amber-600 text-white";
+    case "advanced":
+      return "bg-red-600 text-white";
+    default:
+      return "bg-blue-600 text-white";
+  }
+}
+
+function getReadingTime(estimatedReadingTime?: number, readTime?: number) {
+  const minutes = estimatedReadingTime || readTime;
+  if (!minutes) return null;
+  return `${minutes} min read`;
+}
+
+const formatDate = (date: Date | string) => {
+  if (typeof date === "string") return date;
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  });
+};
+
+const readingTime = getReadingTime(topic.estimatedReadingTime, topic.readTime);
+const hasPrerequisites = topic.prerequisites && topic.prerequisites.length > 0;
+---
+
+<div class="relative overflow-hidden bg-slate-900/50 border border-slate-700 pt-0 gap-0 w-full flex flex-col cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 rounded-lg">
+  <a href={`/topics/${topic.id}`} class="flex flex-col flex-grow">
+    <header class="p-0 gap-0">
+      <div class="aspect-video w-full bg-gradient-to-br from-teahouse-dark to-teahouse-darker relative">
+        {topic.image ? (
+          <Image
+            src={topic.image}
+            alt={topic.title}
+            width={800}
+            height={450}
+            class="w-full h-full object-cover"
+          />
+        ) : (
+          <div class="flex h-full items-center justify-center">
+            <div
+              class={`h-full w-full bg-gradient-to-br ${getDifficultyColor(topic.difficulty)}`}
+            />
+            {topic.icon && (
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="text-6xl text-white/20">
+                  {topic.icon}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Featured badge */}
+        {topic.featured && (
+          <div class="absolute top-4 right-4 bg-emerald-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+            Featured
+          </div>
+        )}
+
+        {/* Difficulty badge */}
+        {topic.difficulty && (
+          <div class="absolute top-4 left-4">
+            <span class={`px-3 py-1 rounded-full text-xs font-semibold ${getDifficultyBadgeColor(topic.difficulty)}`}>
+              {topic.difficulty}
+            </span>
+          </div>
+        )}
+      </div>
+    </header>
+
+    <div class="p-4">
+      <h3 class="mt-2 line-clamp-2 font-noto-serif text-xl text-slate-300 font-bold">
+        {topic.title}
+      </h3>
+      <p class="mt-2 line-clamp-3 text-sm text-slate-300/70">
+        {topic.excerpt || topic.description}
+      </p>
+
+      {/* Prerequisites indicator */}
+      {hasPrerequisites && (
+        <div class="mt-3 flex items-center text-xs text-amber-400">
+          <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+          </svg>
+          {topic.prerequisites?.length} prerequisites
+        </div>
+      )}
+
+      {/* Tags */}
+      {topic.tags && topic.tags.length > 0 && (
+        <div class="mt-3 flex flex-wrap gap-1">
+          {topic.tags.slice(0, 3).map((tag) => (
+            <span class="px-2 py-1 text-xs bg-slate-700 text-slate-300 rounded">
+              {tag}
+            </span>
+          ))}
+          {topic.tags.length > 3 && (
+            <span class="px-2 py-1 text-xs text-slate-500">
+              +{topic.tags.length - 3}
+            </span>
+          )}
+        </div>
+      )}
+    </div>
+
+    <footer class="p-4 pt-0">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3 text-sm text-slate-300/60">
+          {readingTime && (
+            <div class="flex items-center">
+              <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+              </svg>
+              {readingTime}
+            </div>
+          )}
+          <div>
+            {formatDate(topic.publishDate)}
+          </div>
+        </div>
+        {topic.author && (
+          <div class="text-sm text-slate-300/60">{topic.author}</div>
+        )}
+      </div>
+    </footer>
+
+    <div class="flex-grow"></div>
+  </a>
+
+  <div class="flex items-center justify-between mt-2 p-4">
+    <a
+      href={`/topics/${topic.id}`}
+      class="text-sm font-medium text-teahouse-primary"
+    >
+      Explore Topic
+    </a>
+    <div class="flex justify-end items-center gap-2">
+      <ShareButtons
+        url={url}
+        title={topic.title}
+        description={topic.excerpt || topic.description}
+      />
+    </div>
+  </div>
+</div>

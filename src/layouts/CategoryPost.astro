@@ -1,0 +1,242 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import ContentNavigation from "@/components/navigation/ContentNavigation.astro";
+import ShareButtons from "@/components/ShareButtons.astro";
+import TagFilter from "@/components/TagFilter.astro";
+import { SITE_TITLE } from "@/consts";
+import { getAdjacentContent } from "@/lib/navigation";
+import FormattedDate from "../components/FormattedDate.astro";
+import CategoryCard from "../components/category/CategoryCard.astro";
+import "../styles/article.css";
+import MainLayout from "./MainLayout.astro";
+
+type Props = CollectionEntry<"categories">["data"] & { id: string };
+
+const {
+  id,
+  title,
+  description,
+  slug,
+  icon,
+  color,
+  featured,
+  order,
+  targetAudience = [],
+  relatedCategories = [],
+  featuredTopics = [],
+  publishDate,
+  updatedDate,
+} = Astro.props;
+
+const origin = Astro.url.origin;
+const content = await Astro.slots.render("default");
+
+// Get navigation data
+const allCategories = await getCollection("categories");
+const adjacentContent = getAdjacentContent(allCategories, id);
+
+// Get all topics for this category
+const allTopics = await getCollection("topics");
+const categoryTopics = allTopics.filter(topic => topic.data.category === title);
+
+function getCategoryBackground(color?: string) {
+  if (!color) return "from-slate-600 to-slate-700";
+
+  const colorMap: Record<string, string> = {
+    "emerald": "from-emerald-500 to-emerald-700",
+
+    "purple": "from-purple-500 to-purple-700",
+    "pink": "from-pink-500 to-pink-700",
+    "amber": "from-amber-500 to-amber-700",
+    "red": "from-red-500 to-red-700",
+    "green": "from-green-500 to-green-700",
+    "teal": "from-teal-500 to-teal-700",
+    "indigo": "from-indigo-500 to-indigo-700",
+    "orange": "from-orange-500 to-orange-700",
+  };
+
+  return colorMap[color] || "from-slate-600 to-slate-700";
+}
+
+function formatIcon(icon: string) {
+  // Check if icon already contains SVG wrapper
+  if (icon.includes('<svg')) {
+    return icon;
+  }
+  
+  // Wrap path data with SVG element
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${icon}"/></svg>`;
+}
+
+const hasRelatedCategories = relatedCategories && relatedCategories.length > 0;
+const hasFeaturedTopics = featuredTopics && featuredTopics.length > 0;
+const hasCategoryTopics = categoryTopics.length > 0;
+---
+
+<MainLayout
+    title={`${title} | ${SITE_TITLE}`}
+    description={description}
+    type="article"
+    publishedTime={publishDate?.toISOString()}
+    modifiedTime={updatedDate?.toISOString()}
+    section="Categories"
+    keywords={[title, ...targetAudience].join(", ")}
+>
+    <article class="container px-4 md:px-6 prose-teahouse">
+        <!-- Category Header -->
+        <div class="max-w-screen-lg mx-auto p-4">
+            <div class="mb-8 text-center">
+                <!-- Hero Section -->
+                <div class={`h-48 rounded-xl bg-gradient-to-br ${getCategoryBackground(color)} mb-6 flex items-center justify-center`}>
+                    <div class="text-center">
+                        <div class="text-8xl text-white/90 mb-4" set:html={formatIcon(icon)}>
+                        </div>
+                        {featured && (
+                            <div class="bg-emerald-600 text-white px-4 py-2 rounded-full text-sm font-semibold inline-block">
+                                Featured Category
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <!-- Back to Categories Navigation -->
+                <div class="mb-6 text-left">
+                    <a 
+                        href="/categories" 
+                        class="inline-flex items-center text-slate-400 hover:text-emerald-400 transition-colors duration-200 text-sm font-medium"
+                    >
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Back to Categories
+                    </a>
+                </div>
+
+                <h1 class="mb-4 font-serif text-4xl md:text-5xl text-slate-300">{title}</h1>
+                <p class="text-xl text-slate-300/80 leading-relaxed mb-6 max-w-3xl mx-auto">
+                    {description}
+                </p>
+
+                <div class="flex flex-wrap justify-center items-center gap-4 text-sm text-slate-400">
+                    {publishDate && (
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                            </svg>
+                            <FormattedDate date={publishDate} />
+                        </div>
+                    )}
+                    {updatedDate && (
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                            </svg>
+                            Updated <FormattedDate date={updatedDate} />
+                        </div>
+                    )}
+                    {hasCategoryTopics && (
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
+                            </svg>
+                            {categoryTopics.length} topics
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            <!-- Target Audience -->
+            {targetAudience.length > 0 && (
+                <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-slate-300 mb-3">Target Audience</h3>
+                    <div class="flex flex-wrap gap-2">
+                        {targetAudience.map((audience) => (
+                            <span class="px-3 py-1 text-sm bg-emerald-600/20 text-emerald-400 rounded-full">
+                                {audience}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            <hr />
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-screen-lg mx-auto p-4 text-lg">
+            <Fragment set:html={content} />
+        </div>
+
+        <!-- Featured Topics -->
+        {hasFeaturedTopics && (
+            <div class="max-w-screen-lg mx-auto p-4">
+                <h2 class="text-2xl font-bold text-slate-300 mb-4">Featured Topics</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {featuredTopics.map((topicName) => (
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                            <h3 class="font-semibold text-slate-300 mb-2">{topicName}</h3>
+                            <p class="text-sm text-slate-400">Explore this key topic within {title}</p>
+                            <a href={`/topics/${topicName.toLowerCase().replace(/\s+/g, '-')}`} class="text-emerald-400 hover:text-emerald-300 text-sm mt-2 inline-block">
+                                Learn more →
+                            </a>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )}
+
+        <!-- Related Categories -->
+        {hasRelatedCategories && (
+            <div class="max-w-screen-lg mx-auto p-4">
+                <h2 class="text-2xl font-bold text-slate-300 mb-4">Related Categories</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {relatedCategories.map((categoryId) => (
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                            <h3 class="font-semibold text-slate-300 mb-2">{categoryId}</h3>
+                            <p class="text-sm text-slate-400">Explore related content and topics</p>
+                            <a href={`/categories/${categoryId.toLowerCase().replace(/\s+/g, '-')}`} class="text-emerald-400 hover:text-emerald-300 text-sm mt-2 inline-block">
+                                Explore category →
+                            </a>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )}
+
+        <!-- Topics in this Category -->
+        {hasCategoryTopics && (
+            <div class="max-w-screen-lg mx-auto p-4">
+                <h2 class="text-2xl font-bold text-slate-300 mb-4">All Topics in {title}</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {categoryTopics.map((topic) => (
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                            <h3 class="font-semibold text-slate-300 mb-2">{topic.data.title}</h3>
+                            <p class="text-sm text-slate-400 line-clamp-2 mb-2">
+                                {topic.data.excerpt || topic.data.description}
+                            </p>
+                            <div class="flex items-center justify-between">
+                                {topic.data.difficulty && (
+                                    <span class="px-2 py-1 text-xs bg-slate-700 text-slate-300 rounded">
+                                        {topic.data.difficulty}
+                                    </span>
+                                )}
+                                <a href={`/topics/${topic.id}`} class="text-emerald-400 hover:text-emerald-300 text-sm">
+                                    Read more →
+                                </a>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )}
+
+        <!-- Navigation -->
+        <div class="max-w-screen-lg mx-auto p-4">
+            <ContentNavigation
+                adjacentContent={adjacentContent}
+                contentType="categories"
+            />
+        </div>
+    </article>
+</MainLayout>

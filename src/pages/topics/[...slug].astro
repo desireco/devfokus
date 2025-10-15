@@ -1,0 +1,36 @@
+---
+import { getCollection, getEntry, render } from "astro:content";
+import sitemap from "sitemap-ext:config";
+import TopicPost from "../../layouts/TopicPost.astro";
+
+// add all topics to sitemap
+sitemap(async ({ addToSitemap }) => {
+  const topics = await getCollection("topics");
+
+  addToSitemap(
+    topics.map((topic) => ({
+      slug: topic.id,
+    })),
+  );
+});
+
+const { slug } = Astro.params;
+if (slug === undefined) {
+  return new Response(null, {
+    status: 400,
+    statusText: "Bad Request: Slug is missing",
+  });
+}
+
+const topic = await getEntry("topics", slug);
+
+if (!topic) {
+  return Astro.redirect("/404");
+}
+
+const { Content } = await render(topic);
+---
+
+<TopicPost {...topic.data} id={topic.id}>
+  <Content />
+</TopicPost>

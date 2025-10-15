@@ -1,0 +1,216 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import ContentNavigation from "@/components/navigation/ContentNavigation.astro";
+import ShareButtons from "@/components/ShareButtons.astro";
+import TagFilter from "@/components/TagFilter.astro";
+import { SITE_TITLE } from "@/consts";
+import { getAdjacentContent } from "@/lib/navigation";
+import FormattedDate from "../components/FormattedDate.astro";
+import { ImageViewer } from "../components/image-viewer";
+import "../styles/article.css";
+import MainLayout from "./MainLayout.astro";
+
+type Props = CollectionEntry<"topics">["data"] & { id: string };
+
+const {
+  id,
+  title,
+  description,
+  publishDate,
+  updatedDate,
+  tags = [],
+  author,
+  difficulty,
+  difficultyLevel,
+  targetAudience = [],
+  prerequisites = [],
+  estimatedReadingTime,
+  readTime,
+  category,
+  relatedTopics = [],
+  relatedPosts = [],
+  relatedCategories = [],
+} = Astro.props;
+
+const origin = Astro.url.origin;
+const content = await Astro.slots.render("default");
+
+// Get navigation data
+const allTopics = await getCollection("topics");
+const adjacentContent = getAdjacentContent(allTopics, id);
+
+function getReadingTime(estimatedReadingTime?: number, readTime?: number) {
+  const minutes = estimatedReadingTime || readTime;
+  if (!minutes) return null;
+  return `${minutes} min read`;
+}
+
+function getDifficultyColor(difficulty?: string) {
+  if (!difficulty) return "bg-gray-600 text-white";
+
+  switch (difficulty.toLowerCase()) {
+    case "beginner":
+      return "bg-green-600 text-white";
+    case "intermediate":
+      return "bg-amber-600 text-white";
+    case "advanced":
+      return "bg-red-600 text-white";
+    default:
+      return "bg-blue-600 text-white";
+  }
+}
+
+const readingTime = getReadingTime(estimatedReadingTime, readTime);
+const hasPrerequisites = prerequisites && prerequisites.length > 0;
+const hasRelatedContent = relatedTopics.length > 0 || relatedPosts.length > 0 || relatedCategories.length > 0;
+---
+
+<MainLayout
+    title={`${title} | ${SITE_TITLE}`}
+    description={description}
+    type="article"
+    author={author}
+    publishedTime={publishDate.toISOString()}
+    modifiedTime={updatedDate?.toISOString()}
+    section="Topics"
+    tags={tags}
+    keywords={tags.join(", ")}
+>
+    <article class="container px-4 md:px-6 prose-teahouse">
+        <div class="max-w-screen-lg mx-auto p-4">
+            <!-- Topic Header -->
+            <div class="mb-6 py-4 text-center leading-none">
+                <div class="flex flex-wrap justify-center items-center gap-2 mb-4">
+                    {difficulty && (
+                        <span class={`px-3 py-1 rounded-full text-sm font-semibold ${getDifficultyColor(difficulty)}`}>
+                            {difficulty}
+                        </span>
+                    )}
+                    {readingTime && (
+                        <span class="px-3 py-1 rounded-full text-sm bg-slate-700 text-slate-300">
+                            {readingTime}
+                        </span>
+                    )}
+                    {category && (
+                        <span class="px-3 py-1 rounded-full text-sm bg-emerald-600 text-white">
+                            {category}
+                        </span>
+                    )}
+                </div>
+
+                <h1 class="mb-2 font-serif text-3xl md:text-4xl">{title}</h1>
+
+                <div class="date mb-2 text-gray-500">
+                    <FormattedDate date={publishDate} />
+                    {
+                        updatedDate && (
+                            <div class="last-updated-on italic mb-4">
+                                Last updated on{" "}
+                                <FormattedDate date={updatedDate} />
+                            </div>
+                        )
+                    }
+                </div>
+                {author && <div class="text-gray-500">By {author}</div>}
+            </div>
+
+            <!-- Target Audience and Prerequisites -->
+            {(targetAudience.length > 0 || hasPrerequisites) && (
+                <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4 mb-6">
+                    {targetAudience.length > 0 && (
+                        <div class="mb-3">
+                            <h3 class="text-sm font-semibold text-slate-300 mb-2">Target Audience:</h3>
+                            <div class="flex flex-wrap gap-2">
+                                {targetAudience.map((audience) => (
+                                    <span class="px-2 py-1 text-xs bg-slate-700 text-slate-300 rounded">
+                                        {audience}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {hasPrerequisites && (
+                        <div>
+                            <h3 class="text-sm font-semibold text-slate-300 mb-2">Prerequisites:</h3>
+                            <ul class="text-sm text-slate-400">
+                                {prerequisites.map((prereq) => (
+                                    <li class="flex items-center">
+                                        <svg class="w-3 h-3 mr-2 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                        </svg>
+                                        {prereq}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            <div
+                class="md:flex md:justify-between md:items-center block space-y-4 md:space-y-0"
+            >
+                {
+                    tags && tags.length > 0 && (
+                        <TagFilter
+                            tags={tags.map((tag) => ({ tag, size: 1 }))}
+                            type="topics"
+                            usedFor="detail"
+                        />
+                    )
+                }
+                <div class="flex items-center gap-2 lg:justify-end">
+                    <ShareButtons
+                        url={`${origin}/topics/${id}`}
+                        title={title}
+                        description={description}
+                    />
+                </div>
+            </div>
+            <hr />
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-screen-lg mx-auto p-4 text-lg">
+            <Fragment set:html={content} />
+        </div>
+
+        <!-- Related Content -->
+        {hasRelatedContent && (
+            <div class="max-w-screen-lg mx-auto p-4">
+                <h2 class="text-2xl font-bold text-slate-300 mb-4">Related Content</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {relatedTopics.map((topicId) => (
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                            <h3 class="font-semibold text-slate-300 mb-2">Related Topic</h3>
+                            <p class="text-sm text-slate-400">{topicId}</p>
+                        </div>
+                    ))}
+                    {relatedPosts.map((postId) => (
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                            <h3 class="font-semibold text-slate-300 mb-2">Related Post</h3>
+                            <p class="text-sm text-slate-400">{postId}</p>
+                        </div>
+                    ))}
+                    {relatedCategories.map((categoryId) => (
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                            <h3 class="font-semibold text-slate-300 mb-2">Related Category</h3>
+                            <p class="text-sm text-slate-400">{categoryId}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )}
+
+        <!-- Navigation -->
+        <div class="max-w-screen-lg mx-auto p-4">
+            <ContentNavigation
+                adjacentContent={adjacentContent}
+                contentType="topics"
+            />
+        </div>
+    </article>
+    <ImageViewer selector="article img" client:load />
+</MainLayout>

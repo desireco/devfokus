@@ -1,0 +1,179 @@
+---
+import { Image } from "astro:assets";
+import ShareButtons from "../ShareButtons.astro";
+
+export interface Category {
+  id: string;
+  title: string;
+  description: string;
+  slug: string;
+  icon: string;
+  color: string;
+  featured?: boolean;
+  order?: number;
+  targetAudience?: string[];
+  relatedCategories?: string[];
+  featuredTopics?: string[];
+  publishDate?: Date | string;
+  updatedDate?: Date | string;
+}
+
+interface Props {
+  category: Category;
+}
+
+const origin = Astro.url.origin;
+const { category } = Astro.props;
+
+const url = `${origin}/categories/${category.id}`;
+
+function getCategoryBackground(color?: string) {
+  if (!color) return "from-slate-600 to-slate-700";
+
+  // Create gradient based on color
+  const colorMap: Record<string, string> = {
+    "emerald": "from-emerald-500 to-emerald-700",
+    "blue": "from-blue-500 to-blue-700",
+    "purple": "from-purple-500 to-purple-700",
+    "pink": "from-pink-500 to-pink-700",
+    "amber": "from-amber-500 to-amber-700",
+    "red": "from-red-500 to-red-700",
+    "green": "from-green-500 to-green-700",
+    "teal": "from-teal-500 to-teal-700",
+    "indigo": "from-indigo-500 to-indigo-700",
+    "orange": "from-orange-500 to-orange-700",
+  };
+
+  return colorMap[color] || "from-slate-600 to-slate-700";
+}
+
+function formatIcon(icon: string) {
+  // Check if icon already contains SVG wrapper
+  if (icon.includes('<svg')) {
+    return icon;
+  }
+  
+  // Wrap path data with SVG element
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${icon}"/></svg>`;
+}
+
+function formatDate(date?: Date | string) {
+  if (!date) return null;
+  if (typeof date === "string") return date;
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  });
+}
+
+const hasFeaturedTopics = category.featuredTopics && category.featuredTopics.length > 0;
+const hasRelatedCategories = category.relatedCategories && category.relatedCategories.length > 0;
+---
+
+<div class="relative overflow-hidden bg-slate-900/50 border border-slate-700 pt-0 gap-0 w-full flex flex-col cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 rounded-lg">
+  <a href={`/categories/${category.id}`} class="flex flex-col flex-grow">
+    <header class="p-0 gap-0">
+      <div class="aspect-video w-full relative bg-gradient-to-br from-teahouse-dark to-teahouse-darker">
+        <div class={`h-full w-full bg-gradient-to-br ${getCategoryBackground(category.color)}`}>
+          <div class="flex h-full items-center justify-center">
+            <div class="text-center">
+              <div class="text-6xl text-white/90 mb-2" set:html={formatIcon(category.icon)}>
+              </div>
+              {category.featured && (
+                <div class="bg-emerald-600 text-white px-3 py-1 rounded-full text-xs font-semibold inline-block">
+                  Featured Category
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="p-6">
+      <h3 class="text-2xl font-bold text-slate-300 mb-3 text-center">
+        {category.title}
+      </h3>
+      <p class="text-center text-slate-300/80 leading-relaxed mb-4">
+        {category.description}
+      </p>
+
+      {/* Featured Topics Preview */}
+      {hasFeaturedTopics && (
+        <div class="mb-4">
+          <div class="text-sm text-slate-400 mb-2">
+            Featured Topics:
+          </div>
+          <div class="flex flex-wrap gap-1">
+            {category.featuredTopics.slice(0, 3).map((topic) => (
+              <span class="px-2 py-1 text-xs bg-slate-700 text-slate-300 rounded">
+                {topic}
+              </span>
+            ))}
+            {category.featuredTopics.length > 3 && (
+              <span class="px-2 py-1 text-xs text-slate-500">
+                +{category.featuredTopics.length - 3} more
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Target Audience */}
+      {category.targetAudience && category.targetAudience.length > 0 && (
+        <div class="mb-4">
+          <div class="text-sm text-slate-400 mb-2">
+            Target Audience:
+          </div>
+          <div class="flex flex-wrap gap-1">
+            {category.targetAudience.slice(0, 2).map((audience) => (
+              <span class="px-2 py-1 text-xs bg-emerald-600/20 text-emerald-400 rounded">
+                {audience}
+              </span>
+            ))}
+            {category.targetAudience.length > 2 && (
+              <span class="px-2 py-1 text-xs text-slate-500">
+                +{category.targetAudience.length - 2}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Related Categories */}
+      {hasRelatedCategories && (
+        <div class="text-xs text-slate-500">
+          Related: {category.relatedCategories.slice(0, 2).join(", ")}
+          {category.relatedCategories.length > 2 && ` +${category.relatedCategories.length - 2}`}
+        </div>
+      )}
+    </div>
+
+    <footer class="p-6 pt-0">
+      {formatDate(category.publishDate) && (
+        <div class="text-center text-xs text-slate-500">
+          Updated {formatDate(category.publishDate)}
+        </div>
+      )}
+    </footer>
+
+    <div class="flex-grow"></div>
+  </a>
+
+  <div class="flex items-center justify-between mt-2 p-6 pt-0">
+    <a
+      href={`/categories/${category.id}`}
+      class="text-sm font-medium text-teahouse-primary hover:text-teahouse-primary/80"
+    >
+      Explore Category
+    </a>
+    <div class="flex justify-end items-center gap-2">
+      <ShareButtons
+        url={url}
+        title={category.title}
+        description={category.description}
+      />
+    </div>
+  </div>
+</div>
