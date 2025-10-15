@@ -28,7 +28,7 @@ const {
 const selectedTags = tag ? [tag] : [];
 ---
 
-<div class="flex flex-wrap gap-2 w-fit p-4" data-tag-filter>
+<div class="flex flex-wrap gap-2 w-fit py-4" data-tag-filter>
   {
     usedFor === "list" && (
       <>
@@ -77,8 +77,6 @@ const selectedTags = tag ? [tag] : [];
   {
     type === "categories" && targetAudienceList.filter((audienceItem) => (audienceItem.count || 0) > 2).length > 0 && (
       <>
-        <div class="w-full h-px bg-slate-600 my-2"></div>
-        <div class="w-full text-xs text-slate-400 mb-2">Target Audience:</div>
         {targetAudienceList.filter((audienceItem) => (audienceItem.count || 0) > 2).map((audienceItem) => (
           <a
             href={`/${type}?targetAudience=${encodeURIComponent(audienceItem.tag)}`}

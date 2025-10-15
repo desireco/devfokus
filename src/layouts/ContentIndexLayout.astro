@@ -104,10 +104,7 @@ allItems = sourceItems.filter((item) => {
     return true;
 });
 
-// Default to featured categories if no filters are applied and it's the categories page
-if (collectionType === "categories" && !tag && !featured && !targetAudience) {
-    allItems = sourceItems.filter((item) => item.data.featured);
-}
+
 
 const sortedItems = allItems.sort((a, b) => {
     const dateA = a.data.pubDate || a.data.publishDate;
