@@ -1,11 +1,8 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import { getCollection } from "astro:content";
-import ContentNavigation from "@/components/navigation/ContentNavigation.astro";
 import ShareButtons from "@/components/ShareButtons.astro";
 import TagFilter from "@/components/TagFilter.astro";
 import { SITE_TITLE } from "@/consts";
-import { getAdjacentContent } from "@/lib/navigation";
 import FormattedDate from "../components/FormattedDate.astro";
 import { ImageViewer } from "../components/image-viewer";
 import "../styles/article.css";
@@ -35,10 +32,6 @@ const {
 
 const origin = Astro.url.origin;
 const content = await Astro.slots.render("default");
-
-// Get navigation data
-const allTopics = await getCollection("topics");
-const adjacentContent = getAdjacentContent(allTopics, id);
 
 function getReadingTime(estimatedReadingTime?: number, readTime?: number) {
   const minutes = estimatedReadingTime || readTime;
@@ -155,10 +148,10 @@ const hasRelatedContent = relatedTopics.length > 0 || relatedPosts.length > 0 ||
                 {
                     tags && tags.length > 0 && (
                         <TagFilter
-                            tags={tags.map((tag) => ({ tag, size: 1 }))}
-                            type="topics"
-                            usedFor="detail"
-                        />
+                        tags={tags.map((tag) => ({ tag, size: 1 }))}
+                        type="categories"
+                        usedFor="detail"
+                    />
                     )
                 }
                 <div class="flex items-center gap-2 lg:justify-end">
@@ -175,6 +168,110 @@ const hasRelatedContent = relatedTopics.length > 0 || relatedPosts.length > 0 ||
         <!-- Main Content -->
         <div class="max-w-screen-lg mx-auto p-4 text-lg">
             <Fragment set:html={content} />
+        </div>
+
+        <!-- Built By Dakic CTA Section -->
+        <div class="max-w-screen-lg mx-auto p-4 my-8">
+            <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-slate-700/50 rounded-xl p-8 backdrop-blur-sm">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-100 mb-3">
+                        Need Help Building Your Product?
+                    </h2>
+                    <p class="text-slate-300 text-lg max-w-2xl mx-auto">
+                        Turn your ideas into reality with our streamlined development approach.
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-semibold text-emerald-400 mb-3">Development Services</h3>
+                        <ul class="space-y-2 text-slate-300">
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 mr-3 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                <span>MVP building & feature development</span>
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 mr-3 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                <span>Two-week development sprints</span>
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 mr-3 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                <span>AI-powered development tools</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-semibold text-blue-400 mb-3">Technical Leadership</h3>
+                        <ul class="space-y-2 text-slate-300">
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 mr-3 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                <span>CTO advisory & strategic planning</span>
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 mr-3 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                <span>20+ years of tech leadership</span>
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 mr-3 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                <span>System architecture guidance</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="bg-slate-700/30 rounded-lg p-6 mb-6">
+                    <div class="flex items-center justify-center space-x-8 text-sm text-slate-300">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                            <span>Transparent Pricing</span>
+                        </div>
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                            <span>No Long-term Commitments</span>
+                        </div>
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                            <span>Start in 2-3 Days</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <a 
+                        href="https://dakic.com/services" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                    >
+                        <span class="mr-2">Explore Our Services</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                    </a>
+                    <p class="text-slate-400 text-sm mt-3">
+                        Join hundreds of founders who've simplified their development with our approach <mcreference link="https://dakic.com/services" index="0">0</mcreference>
+                    </p>
+                </div>
+            </div>
         </div>
 
         <!-- Related Content -->
@@ -204,13 +301,7 @@ const hasRelatedContent = relatedTopics.length > 0 || relatedPosts.length > 0 ||
             </div>
         )}
 
-        <!-- Navigation -->
-        <div class="max-w-screen-lg mx-auto p-4">
-            <ContentNavigation
-                adjacentContent={adjacentContent}
-                contentType="topics"
-            />
-        </div>
+
     </article>
     <ImageViewer selector="article img" client:load />
 </MainLayout>
