@@ -27,7 +27,7 @@ export const StructuredDataSchema = z.object({
 export const TopicMetadata = PageBaseMetadata.extend({
   // Basic categorization
   tags: z.array(z.string()).default([]),
-  category: z.string().optional(),
+  category: z.reference("categories").optional(),
 
   // Content metadata
   excerpt: z.string().optional(),
@@ -60,7 +60,7 @@ export const TopicMetadata = PageBaseMetadata.extend({
   relatedPosts: z.array(z.string()).default([]),
   relatedServices: z.array(z.string()).default([]),
   services: z.array(z.string()).default([]),
-  relatedCategories: z.array(z.string()).default([]),
+  relatedCategories: z.array(z.reference("categories")).default([]),
 
   // SEO optimization
   meta: SEOMetadata.optional(),

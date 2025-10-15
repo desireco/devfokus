@@ -2,6 +2,7 @@ import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { BlogMetadata } from "./schemas/blog";
 import { CardMetadata } from "./schemas/card";
+import { CategoryMetadata } from "./schemas/category";
 import { SlideMetadata } from "./schemas/slide";
 import { TopicMetadata } from "./schemas/topic";
 
@@ -18,6 +19,11 @@ const cards = defineCollection({
   schema: CardMetadata,
 });
 
+const categories = defineCollection({
+  loader: glob({ base: "./src/content/categories", pattern: "**/*.{md,mdx}" }),
+  schema: CategoryMetadata,
+});
+
 const slides = defineCollection({
   loader: glob({ base: "./src/content/slides", pattern: "**/*.{md,mdx}" }),
   schema: SlideMetadata,
@@ -28,4 +34,4 @@ const topics = defineCollection({
   schema: TopicMetadata,
 });
 
-export const collections = { blogs, cards, slides, topics };
+export const collections = { blogs, cards, categories, slides, topics };
