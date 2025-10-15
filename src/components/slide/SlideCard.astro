@@ -14,7 +14,7 @@ export interface Slide {
 }
 
 interface Props {
-  slide: Slide;
+    slide: Slide;
 }
 
 const { slide } = Astro.props;
@@ -24,19 +24,19 @@ const slideContent = `
 ---
 
 <div
-  class="group hover:shadow-lg transition-all duration-300 cursor-pointer w-full flex flex-col rounded-2xl border bg-card text-card-foreground shadow"
+    class="group hover:shadow-lg transition-all duration-300 cursor-pointer w-full flex flex-col rounded-2xl border bg-card text-card-foreground shadow"
 >
-  <div
-    class="w-full h-48 p-0 relative rounded-2xl overflow-hidden slide-preview"
-  >
-    <SlideViewer
-      content={slideContent}
-      theme={slide.theme}
-      transition={slide.transition}
-      controls={false}
-      progress={false}
-      preview={true}
-      client:load
-    />
-  </div>
+    <div
+        class="w-full h-48 p-0 relative rounded-2xl overflow-hidden slide-preview"
+    >
+        <SlideViewer
+            content={slideContent}
+            theme={slide.theme}
+            transition={slide.transition}
+            controls={false}
+            progress={false}
+            preview={true}
+            client:load
+        />
+    </div>
 </div>

@@ -4,9 +4,10 @@ description: 'A comprehensive guide to the different layers of automated testing
 publishDate: '2025-10-14'
 category: 'devops'
 difficulty: 'beginner'
+author: 'Jake Dakich'
 targetAudience: ['Developers', 'QA Engineers', 'DevOps Engineers']
 estimatedReadingTime: 11
-tags: ['automated testing', 'devops', 'ci/cd', 'unit testing', 'e2e testing']
+tags: ['automated testing', 'devops', 'ci/cd', 'unit testing', 'e2e testing', 'coding-cli', 'how-it-works', 'agent']
 featured: false
 relatedTopics: ['an-introduction-to-cicd', 'an-introduction-to-devsecops']
 relatedServices: ['devops-consulting', 'quality-engineering-services']
@@ -55,7 +56,7 @@ The Testing Pyramid is a model for a balanced testing strategy. It advocates for
 Contract testing (using a tool like Pact) is a form of integration testing that is excellent for microservices. It allows you to verify that two services can communicate with each other without having to run both services at the same time, making the tests faster and more reliable.
 
 **Q: Should I aim for 100% test coverage?**
-No. Aiming for 100% coverage often leads to writing low-value tests just to satisfy the metric, and it still doesn't guarantee correctness. A better approach is to focus on thoroughly testing the critical paths and complex logic in your application and using coverage as a tool to find gaps.
+No. Aiming for 100% coverage often leads to writing low-value tests just to satisfy the metric, and it still doesn't guarantee your code is bug-free. A better approach is to focus on thoroughly testing the critical paths and complex logic in your application and using coverage as a tool to find gaps.
 
 ## Tools & Resources
 
