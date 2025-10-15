@@ -88,7 +88,7 @@ const hasPrerequisites = topic.prerequisites && topic.prerequisites.length > 0;
 <div class="relative overflow-hidden bg-slate-900/50 border border-slate-700 pt-0 gap-0 w-full flex flex-col cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 rounded-lg">
   <a href={`/topics/${topic.id}`} class="flex flex-col flex-grow">
     <header class="p-0 gap-0">
-      <div class="aspect-video w-full bg-gradient-to-br from-teahouse-dark to-teahouse-darker relative">
+      <div class="h-32 w-full bg-gradient-to-br from-teahouse-dark to-teahouse-darker relative">
         {topic.image ? (
           <Image
             src={topic.image}
@@ -114,26 +114,30 @@ const hasPrerequisites = topic.prerequisites && topic.prerequisites.length > 0;
 
         {/* Featured badge */}
         {topic.featured && (
-          <div class="absolute top-4 right-4 bg-emerald-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+          <div class="absolute top-2 right-2 bg-emerald-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
             Featured
           </div>
         )}
 
         {/* Difficulty badge */}
         {topic.difficulty && (
-          <div class="absolute top-4 left-4">
-            <span class={`px-3 py-1 rounded-full text-xs font-semibold ${getDifficultyBadgeColor(topic.difficulty)}`}>
+          <div class="absolute top-2 left-2">
+            <span class={`px-2 py-1 rounded-full text-xs font-semibold ${getDifficultyBadgeColor(topic.difficulty)}`}>
               {topic.difficulty}
             </span>
           </div>
         )}
+
+        {/* Title overlay */}
+        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4">
+          <h3 class="line-clamp-2 font-noto-serif text-lg text-white font-bold text-center">
+            {topic.title}
+          </h3>
+        </div>
       </div>
     </header>
 
     <div class="p-4">
-      <h3 class="mt-2 line-clamp-2 font-noto-serif text-xl text-slate-300 font-bold">
-        {topic.title}
-      </h3>
       <p class="mt-2 line-clamp-3 text-sm text-slate-300/70">
         {topic.excerpt || topic.description}
       </p>
