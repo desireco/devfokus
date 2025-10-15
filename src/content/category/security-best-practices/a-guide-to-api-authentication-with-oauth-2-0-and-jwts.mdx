@@ -1,0 +1,73 @@
+---
+title: 'A Guide to API Authentication with OAuth 2.0 and JWTs'
+description: 'A guide to modern API security, explaining how the OAuth 2.0 framework and JSON Web Tokens (JWTs) are used for secure authentication and authorization.'
+publishDate: '2025-10-14'
+category: 'security-best-practices'
+difficulty: 'intermediate'
+targetAudience: ['Software Engineers', 'Backend Developers', 'API Developers']
+estimatedReadingTime: 12
+tags: ['api security', 'oauth2', 'jwt', 'authentication', 'authorization']
+featured: true
+relatedTopics: ['preventing-cross-site-request-forgery-csrf-attacks', 'best-practices-for-securely-storing-passwords']
+relatedServices: ['api-security-consulting', 'secure-development-training']
+meta:
+  metaTitle: 'API Authentication with OAuth 2.0 and JWTs: A Guide'
+  metaDescription: 'Learn how to secure your APIs using OAuth 2.0 and JWTs. This guide explains the roles of each and how they work together for modern authentication and authorization.'
+  keywords: ['oauth 2.0', 'jwt', 'api authentication', 'api security', 'bearer token']
+---
+
+# A Guide to API Authentication with OAuth 2.0 and JWTs
+
+## Quick Summary (TL;DR)
+
+Modern API security often relies on a combination of **OAuth 2.0** and **JSON Web Tokens (JWTs)**. OAuth 2.0 is an _authorization framework_ that allows a user to grant a third-party application limited access to their data on another service, without sharing their password. It does this by issuing an **access token**. A JWT is a _token format_; it's a compact, self-contained way to securely transmit information between parties as a JSON object. In many modern systems, the access token issued by an OAuth 2.0 server is formatted as a JWT.
+
+## Key Takeaways
+
+- **OAuth 2.0 is for Authorization**: OAuth 2.0 is about delegating access. It is a protocol that allows a user to tell Service A that it's okay for Service B to access their data on Service A. It is not, by itself, an authentication protocol.
+- **JWTs are for Representing Claims**: A JWT is a token that contains "claims" (e.g., the user's ID, their roles, and an expiration time). Because JWTs can be digitally signed, the receiving party can verify their authenticity without needing to call back to the issuing server.
+- **Bearer Tokens are the Standard**: When a client makes a request to a secure API, it presents the access token (often a JWT) in the `Authorization` header using the `Bearer` scheme. The API server then validates the token to authenticate and authorize the request.
+
+## The Solution
+
+Securing APIs, especially in a microservices world, requires a stateless, scalable, and secure method of handling authentication and authorization. Traditional session cookies don't work well across different services and domains. The solution is a token-based workflow. An authentication server (acting as an OAuth 2.0 provider) is responsible for verifying a user's identity and issuing a short-lived access token in the form of a JWT. The client application then includes this JWT in the header of every request to a resource server (the API). The API can independently verify the JWT's signature and expiration, and read the claims inside it to determine if the user is authorized to perform the requested action, all without needing to maintain any session state on the server.
+
+## Implementation Steps
+
+1.  **Choose an OAuth 2.0 Grant Type**
+    OAuth 2.0 defines several flows, or "grant types." For a traditional web application, the **Authorization Code** grant is the most secure and common. For a single-page application (SPA) running in a browser, the **Authorization Code with PKCE** grant is the standard.
+
+2.  **Set Up an Authorization Server**
+    You can build your own, but it's often better to use a dedicated identity provider like Auth0, Okta, or an open-source solution like Keycloak. This server will handle user login, consent, and token issuance.
+
+3.  **Implement the Client-Side Flow**
+    Your client application will redirect the user to the authorization server to log in. After successful login, the authorization server will redirect the user back to your application with an authorization code. Your application then exchanges this code for an access token (a JWT) and a refresh token.
+
+4.  **Secure Your API**
+    In your API (the resource server), add logic to every protected endpoint that inspects the `Authorization` header for a bearer token. Use a library to validate the JWT's signature against the public key of the authorization server, check its expiration time, and verify its claims. If the token is valid, the request is processed; otherwise, it is rejected with a `401 Unauthorized` error.
+
+## Common Questions
+
+**Q: What is the difference between authentication and authorization?**
+**Authentication** is the process of verifying who a user is (e.g., by checking their username and password). **Authorization** is the process of determining what an authenticated user is allowed to do (e.g., a user is authorized to read data but not delete it).
+
+**Q: What is a refresh token?**
+Access tokens (JWTs) are typically short-lived (e.g., 15 minutes) for security. A **refresh token** is a long-lived token that is issued alongside the access token. When the access token expires, the client can use the refresh token to obtain a new access token without forcing the user to log in again.
+
+**Q: Where should I store JWTs in a browser?**
+This is a topic of much debate. Storing JWTs in `localStorage` is common but makes them vulnerable to XSS attacks. A more secure approach is to store them in a secure, `HttpOnly` cookie, which makes them inaccessible to JavaScript. This often requires a backend component to manage the token lifecycle.
+
+## Tools & Resources
+
+- **Auth0 / Okta**: Leading commercial Identity-as-a-Service (IDaaS) platforms that make it easy to implement OAuth 2.0 and modern authentication.
+- **Keycloak**: A popular, open-source Identity and Access Management solution that you can host yourself.
+- **JWT.io**: A useful online tool for decoding, verifying, and generating JWTs.
+
+## Related Topics
+
+- [Preventing Cross-Site Request Forgery (CSRF) Attacks](/category/security-best-practices/preventing-cross-site-request-forgery-csrf-attacks)
+- [Best Practices for Securely Storing Passwords](/category/security-best-practices/best-practices-for-securely-storing-passwords)
+
+## Need Help With Implementation?
+
+Implementing modern authentication and authorization correctly is complex and critical for your application's security. Built By Dakic provides expert consulting on API security and identity management, helping you design and build a secure, scalable, and standards-compliant authentication system. Get in touch for a free consultation.

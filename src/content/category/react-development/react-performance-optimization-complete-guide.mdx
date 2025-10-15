@@ -1,0 +1,1295 @@
+---
+title: 'React performance optimization: Complete guide'
+description: 'Master React performance optimization with comprehensive techniques including memoization, code splitting, virtual scrolling, bundle optimization, and advanced patterns for building lightning-fast React applications.'
+publishDate: 2024-01-18T00:00:00Z
+category: 'react-development'
+difficulty: 'intermediate'
+targetAudience: ['React developers', 'frontend engineers', 'performance engineers']
+estimatedReadingTime: 12
+tags:
+  [
+    'react-performance',
+    'optimization',
+    'memoization',
+    'code-splitting',
+    'virtual-scrolling',
+    'bundle-optimization',
+    'react-patterns',
+  ]
+featured: true
+relatedTopics:
+  [
+    'react-hooks-advanced-patterns',
+    'state-management-zustand',
+    'react-testing-strategies',
+    'frontend-performance-optimization',
+  ]
+relatedServices: ['React Development', 'Performance Optimization', 'Frontend Consulting']
+meta:
+  title: 'React Performance Optimization: Complete Guide 2024 - Memoization, Code Splitting & More'
+  description: 'Master React performance with memoization, code splitting, virtual scrolling, and bundle optimization. Complete guide with practical examples and advanced techniques.'
+  keywords:
+    [
+      'react performance',
+      'react optimization',
+      'memoization',
+      'code splitting',
+      'virtual scrolling',
+      'bundle optimization',
+      'react patterns',
+    ]
+  ogImage: '/images/react-performance-optimization.jpg'
+---
+
+# React performance optimization: Complete guide
+
+## Quick Summary (TL;DR)
+
+React performance optimization is crucial for creating fast, responsive applications that provide excellent user experience. This comprehensive guide covers essential optimization techniques including React.memo, useMemo, useCallback, code splitting, virtual scrolling, bundle optimization, and advanced patterns. Learn how to identify performance bottlenecks, implement effective optimizations, and build React applications that scale efficiently with proper measurement and monitoring.
+
+## Key Takeaways
+
+- **Measure First**: Use React DevTools Profiler to identify actual performance bottlenecks
+- **Memoization Strategy**: Apply React.memo, useMemo, and useCallback strategically, not everywhere
+- **Code Splitting**: Implement route-based and component-based code splitting for faster initial loads
+- **Virtual Scrolling**: Handle large lists efficiently with windowing techniques
+- **Bundle Optimization**: Optimize webpack configuration and implement tree shaking
+- **State Management**: Minimize re-renders with proper state structure and context optimization
+- **Image Optimization**: Implement lazy loading, responsive images, and modern formats
+
+## The Solution
+
+React performance optimization requires a systematic approach that addresses different aspects of your application. Here's how to implement comprehensive performance optimizations:
+
+### 1. Performance Measurement and Profiling
+
+**React DevTools Profiler Setup:**
+
+```typescript
+// components/PerformanceProfiler.tsx
+import { Profiler, ProfilerOnRenderCallback } from 'react';
+
+interface PerformanceProfilerProps {
+  id: string;
+  children: React.ReactNode;
+  onRender?: ProfilerOnRenderCallback;
+}
+
+export const PerformanceProfiler: React.FC<PerformanceProfilerProps> = ({
+  id,
+  children,
+  onRender
+}) => {
+  const handleRender: ProfilerOnRenderCallback = (
+    id,
+    phase,
+    actualDuration,
+    baseDuration,
+    startTime,
+    commitTime,
+    interactions
+  ) => {
+    // Log performance metrics
+    if (process.env.NODE_ENV === 'development') {
+      console.group(`🔍 Performance Profile: ${id}`);
+      console.log('Phase:', phase);
+      console.log('Actual Duration:', `${actualDuration.toFixed(2)}ms`);
+      console.log('Base Duration:', `${baseDuration.toFixed(2)}ms`);
+      console.log('Start Time:', startTime);
+      console.log('Commit Time:', commitTime);
+      console.log('Interactions:', interactions);
+      console.groupEnd();
+    }
+
+    // Send to analytics in production
+    if (process.env.NODE_ENV === 'production' && actualDuration > 16) {
+      // Report slow renders (>16ms for 60fps)
+      analytics.track('slow_render', {
+        componentId: id,
+        phase,
+        duration: actualDuration,
+        timestamp: Date.now()
+      });
+    }
+
+    onRender?.(id, phase, actualDuration, baseDuration, startTime, commitTime, interactions);
+  };
+
+  return (
+    <Profiler id={id} onRender={handleRender}>
+      {children}
+    </Profiler>
+  );
+};
+
+// Custom hook for performance monitoring
+export const usePerformanceMonitor = (componentName: string) => {
+  const renderCount = useRef(0);
+  const lastRenderTime = useRef(Date.now());
+
+  useEffect(() => {
+    renderCount.current += 1;
+    const currentTime = Date.now();
+    const timeSinceLastRender = currentTime - lastRenderTime.current;
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🔄 ${componentName} render #${renderCount.current} (${timeSinceLastRender}ms since last)`);
+    }
+
+    lastRenderTime.current = currentTime;
+  });
+
+  return { renderCount: renderCount.current };
+};
+
+// Usage in components
+const ProductList: React.FC = () => {
+  const { renderCount } = usePerformanceMonitor('ProductList');
+
+  return (
+    <PerformanceProfiler id="ProductList">
+      {/* Component content */}
+    </PerformanceProfiler>
+  );
+};
+```
+
+**Web Vitals Monitoring:**
+
+```typescript
+// utils/webVitals.ts
+import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals';
+
+interface VitalMetric {
+  name: string;
+  value: number;
+  rating: 'good' | 'needs-improvement' | 'poor';
+  delta: number;
+  id: string;
+}
+
+export const measureWebVitals = () => {
+  const sendToAnalytics = (metric: VitalMetric) => {
+    // Send to your analytics service
+    console.log('Web Vital:', metric);
+
+    // Example: Send to Google Analytics
+    if (typeof gtag !== 'undefined') {
+      gtag('event', metric.name, {
+        event_category: 'Web Vitals',
+        value: Math.round(metric.value),
+        event_label: metric.id,
+        non_interaction: true,
+      });
+    }
+  };
+
+  getCLS(sendToAnalytics);
+  getFID(sendToAnalytics);
+  getFCP(sendToAnalytics);
+  getLCP(sendToAnalytics);
+  getTTFB(sendToAnalytics);
+};
+
+// Performance observer for custom metrics
+export const observePerformance = () => {
+  if ('PerformanceObserver' in window) {
+    // Observe long tasks (>50ms)
+    const longTaskObserver = new PerformanceObserver((list) => {
+      list.getEntries().forEach((entry) => {
+        console.warn('Long Task detected:', {
+          duration: entry.duration,
+          startTime: entry.startTime,
+          name: entry.name,
+        });
+      });
+    });
+
+    longTaskObserver.observe({ entryTypes: ['longtask'] });
+
+    // Observe layout shifts
+    const layoutShiftObserver = new PerformanceObserver((list) => {
+      list.getEntries().forEach((entry: any) => {
+        if (entry.value > 0.1) {
+          console.warn('Layout Shift detected:', {
+            value: entry.value,
+            sources: entry.sources,
+          });
+        }
+      });
+    });
+
+    layoutShiftObserver.observe({ entryTypes: ['layout-shift'] });
+  }
+};
+```
+
+### 2. Strategic Memoization
+
+**React.memo with Custom Comparison:**
+
+```typescript
+// components/ProductCard.tsx
+import React, { memo } from 'react';
+
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  category: string;
+  inStock: boolean;
+  rating: number;
+  reviews: number;
+}
+
+interface ProductCardProps {
+  product: Product;
+  onAddToCart: (productId: string) => void;
+  onToggleFavorite: (productId: string) => void;
+  isInCart: boolean;
+  isFavorite: boolean;
+}
+
+// Custom comparison function for React.memo
+const arePropsEqual = (prevProps: ProductCardProps, nextProps: ProductCardProps): boolean => {
+  // Only re-render if these specific props change
+  return (
+    prevProps.product.id === nextProps.product.id &&
+    prevProps.product.price === nextProps.product.price &&
+    prevProps.product.inStock === nextProps.product.inStock &&
+    prevProps.isInCart === nextProps.isInCart &&
+    prevProps.isFavorite === nextProps.isFavorite
+  );
+};
+
+const ProductCardComponent: React.FC<ProductCardProps> = ({
+  product,
+  onAddToCart,
+  onToggleFavorite,
+  isInCart,
+  isFavorite
+}) => {
+  // Memoize expensive calculations
+  const discountPercentage = useMemo(() => {
+    if (product.originalPrice && product.price < product.originalPrice) {
+      return Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+    }
+    return 0;
+  }, [product.price, product.originalPrice]);
+
+  // Memoize event handlers to prevent child re-renders
+  const handleAddToCart = useCallback(() => {
+    onAddToCart(product.id);
+  }, [onAddToCart, product.id]);
+
+  const handleToggleFavorite = useCallback(() => {
+    onToggleFavorite(product.id);
+  }, [onToggleFavorite, product.id]);
+
+  return (
+    <div className="product-card">
+      <div className="product-image">
+        <img
+          src={product.image}
+          alt={product.name}
+          loading="lazy"
+          decoding="async"
+        />
+        {discountPercentage > 0 && (
+          <span className="discount-badge">-{discountPercentage}%</span>
+        )}
+      </div>
+
+      <div className="product-info">
+        <h3>{product.name}</h3>
+        <div className="price">
+          <span className="current-price">${product.price}</span>
+          {product.originalPrice && (
+            <span className="original-price">${product.originalPrice}</span>
+          )}
+        </div>
+
+        <div className="rating">
+          <StarRating rating={product.rating} />
+          <span>({product.reviews} reviews)</span>
+        </div>
+
+        <div className="actions">
+          <button
+            onClick={handleAddToCart}
+            disabled={!product.inStock || isInCart}
+            className={`add-to-cart ${isInCart ? 'in-cart' : ''}`}
+          >
+            {isInCart ? 'In Cart' : 'Add to Cart'}
+          </button>
+
+          <button
+            onClick={handleToggleFavorite}
+            className={`favorite ${isFavorite ? 'active' : ''}`}
+            aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            ❤️
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const ProductCard = memo(ProductCardComponent, arePropsEqual);
+```
+
+**Advanced useMemo and useCallback Patterns:**
+
+```typescript
+// hooks/useOptimizedData.ts
+import { useMemo, useCallback, useRef } from 'react';
+
+// Memoize expensive computations with dependencies
+export const useExpensiveCalculation = (data: any[], filters: FilterOptions) => {
+  return useMemo(() => {
+    console.log('🔄 Recalculating expensive data...');
+
+    // Simulate expensive calculation
+    return data
+      .filter((item) => {
+        if (filters.category && item.category !== filters.category) return false;
+        if (filters.priceRange) {
+          const [min, max] = filters.priceRange;
+          if (item.price < min || item.price > max) return false;
+        }
+        if (filters.inStock && !item.inStock) return false;
+        return true;
+      })
+      .sort((a, b) => {
+        switch (filters.sortBy) {
+          case 'price-asc':
+            return a.price - b.price;
+          case 'price-desc':
+            return b.price - a.price;
+          case 'rating':
+            return b.rating - a.rating;
+          case 'name':
+            return a.name.localeCompare(b.name);
+          default:
+            return 0;
+        }
+      });
+  }, [data, filters.category, filters.priceRange, filters.inStock, filters.sortBy]);
+};
+
+// Stable callback references
+export const useStableCallbacks = () => {
+  const callbacksRef = useRef<Record<string, Function>>({});
+
+  const createStableCallback = useCallback((key: string, callback: Function) => {
+    if (!callbacksRef.current[key]) {
+      callbacksRef.current[key] = (...args: any[]) => callback(...args);
+    }
+    return callbacksRef.current[key];
+  }, []);
+
+  return createStableCallback;
+};
+
+// Debounced memoization for search
+export const useDebouncedMemo = <T>(
+  factory: () => T,
+  deps: React.DependencyList,
+  delay: number = 300
+): T | undefined => {
+  const [debouncedDeps, setDebouncedDeps] = useState(deps);
+  const timeoutRef = useRef<NodeJS.Timeout>();
+
+  useEffect(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      setDebouncedDeps(deps);
+    }, delay);
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, deps);
+
+  return useMemo(factory, debouncedDeps);
+};
+```
+
+### 3. Code Splitting and Lazy Loading
+
+**Route-Based Code Splitting:**
+
+```typescript
+// router/AppRouter.tsx
+import { lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ErrorBoundary } from '../components/ErrorBoundary';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+
+// Lazy load route components
+const Home = lazy(() => import('../pages/Home'));
+const Products = lazy(() => import('../pages/Products'));
+const ProductDetail = lazy(() => import('../pages/ProductDetail'));
+const Cart = lazy(() => import('../pages/Cart'));
+const Checkout = lazy(() => import('../pages/Checkout'));
+const Profile = lazy(() => import('../pages/Profile'));
+const Admin = lazy(() => import('../pages/Admin'));
+
+// Preload critical routes
+const preloadRoute = (routeComponent: () => Promise<any>) => {
+  const componentImport = routeComponent();
+  return componentImport;
+};
+
+// Preload on user interaction
+export const preloadCriticalRoutes = () => {
+  // Preload likely next routes
+  preloadRoute(() => import('../pages/Products'));
+  preloadRoute(() => import('../pages/Cart'));
+};
+
+const LazyRoute: React.FC<{
+  component: React.LazyExoticComponent<React.ComponentType<any>>;
+  fallback?: React.ComponentType;
+}> = ({ component: Component, fallback: Fallback = LoadingSpinner }) => (
+  <ErrorBoundary>
+    <Suspense fallback={<Fallback />}>
+      <Component />
+    </Suspense>
+  </ErrorBoundary>
+);
+
+export const AppRouter: React.FC = () => {
+  useEffect(() => {
+    // Preload critical routes after initial render
+    const timer = setTimeout(preloadCriticalRoutes, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LazyRoute component={Home} />} />
+        <Route path="/products" element={<LazyRoute component={Products} />} />
+        <Route path="/products/:id" element={<LazyRoute component={ProductDetail} />} />
+        <Route path="/cart" element={<LazyRoute component={Cart} />} />
+        <Route path="/checkout" element={<LazyRoute component={Checkout} />} />
+        <Route path="/profile" element={<LazyRoute component={Profile} />} />
+        <Route path="/admin/*" element={<LazyRoute component={Admin} />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
+```
+
+**Component-Based Code Splitting:**
+
+```typescript
+// components/LazyComponents.tsx
+import { lazy, Suspense, useState, useCallback } from 'react';
+
+// Lazy load heavy components
+const ChartComponent = lazy(() => import('./Chart'));
+const DataTable = lazy(() => import('./DataTable'));
+const ImageEditor = lazy(() => import('./ImageEditor'));
+const VideoPlayer = lazy(() => import('./VideoPlayer'));
+
+// Higher-order component for lazy loading with error handling
+const withLazyLoading = <P extends object>(
+  LazyComponent: React.LazyExoticComponent<React.ComponentType<P>>,
+  fallback: React.ComponentType = () => <div>Loading...</div>
+) => {
+  return (props: P) => (
+    <ErrorBoundary fallback={<div>Failed to load component</div>}>
+      <Suspense fallback={<fallback />}>
+        <LazyComponent {...props} />
+      </Suspense>
+    </ErrorBoundary>
+  );
+};
+
+// Conditional lazy loading based on user interaction
+export const ConditionalLazyLoader: React.FC = () => {
+  const [showChart, setShowChart] = useState(false);
+  const [showTable, setShowTable] = useState(false);
+
+  const LazyChart = useMemo(() =>
+    withLazyLoading(ChartComponent, () => <div>Loading chart...</div>),
+    []
+  );
+
+  const LazyTable = useMemo(() =>
+    withLazyLoading(DataTable, () => <div>Loading table...</div>),
+    []
+  );
+
+  return (
+    <div>
+      <button onClick={() => setShowChart(true)}>
+        Show Chart
+      </button>
+      <button onClick={() => setShowTable(true)}>
+        Show Data Table
+      </button>
+
+      {showChart && <LazyChart data={chartData} />}
+      {showTable && <LazyTable data={tableData} />}
+    </div>
+  );
+};
+
+// Intersection Observer for lazy loading
+export const useIntersectionLazyLoad = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  return { ref, isVisible };
+};
+
+// Usage with intersection observer
+export const LazySection: React.FC = () => {
+  const { ref, isVisible } = useIntersectionLazyLoad();
+
+  return (
+    <div ref={ref}>
+      {isVisible ? (
+        <Suspense fallback={<div>Loading section...</div>}>
+          <HeavyComponent />
+        </Suspense>
+      ) : (
+        <div style={{ height: '400px' }}>Scroll to load content</div>
+      )}
+    </div>
+  );
+};
+```
+
+### 4. Virtual Scrolling for Large Lists
+
+**React Window Implementation:**
+
+```typescript
+// components/VirtualizedList.tsx
+import { FixedSizeList as List, VariableSizeList } from 'react-window';
+import { memo, useMemo, useCallback } from 'react';
+
+interface VirtualizedProductListProps {
+  products: Product[];
+  onProductClick: (product: Product) => void;
+  height: number;
+  width: number;
+}
+
+// Memoized list item component
+const ProductListItem = memo<{
+  index: number;
+  style: React.CSSProperties;
+  data: {
+    products: Product[];
+    onProductClick: (product: Product) => void;
+  };
+}>(({ index, style, data }) => {
+  const product = data.products[index];
+
+  const handleClick = useCallback(() => {
+    data.onProductClick(product);
+  }, [data.onProductClick, product]);
+
+  return (
+    <div style={style} className="virtual-list-item">
+      <div className="product-item" onClick={handleClick}>
+        <img
+          src={product.image}
+          alt={product.name}
+          loading="lazy"
+          width="60"
+          height="60"
+        />
+        <div className="product-info">
+          <h4>{product.name}</h4>
+          <p>${product.price}</p>
+          <span className={`stock ${product.inStock ? 'in-stock' : 'out-of-stock'}`}>
+            {product.inStock ? 'In Stock' : 'Out of Stock'}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+export const VirtualizedProductList: React.FC<VirtualizedProductListProps> = ({
+  products,
+  onProductClick,
+  height,
+  width
+}) => {
+  // Memoize item data to prevent unnecessary re-renders
+  const itemData = useMemo(() => ({
+    products,
+    onProductClick
+  }), [products, onProductClick]);
+
+  return (
+    <List
+      height={height}
+      width={width}
+      itemCount={products.length}
+      itemSize={80} // Fixed height for each item
+      itemData={itemData}
+      overscanCount={5} // Render 5 extra items outside viewport
+    >
+      {ProductListItem}
+    </List>
+  );
+};
+
+// Variable size list for dynamic content
+export const VariableSizeProductList: React.FC<VirtualizedProductListProps> = ({
+  products,
+  onProductClick,
+  height,
+  width
+}) => {
+  const listRef = useRef<VariableSizeList>(null);
+
+  // Calculate item height based on content
+  const getItemSize = useCallback((index: number) => {
+    const product = products[index];
+    const baseHeight = 80;
+    const descriptionHeight = product.description ? 40 : 0;
+    const reviewsHeight = product.reviews > 0 ? 30 : 0;
+
+    return baseHeight + descriptionHeight + reviewsHeight;
+  }, [products]);
+
+  // Reset cache when products change
+  useEffect(() => {
+    if (listRef.current) {
+      listRef.current.resetAfterIndex(0);
+    }
+  }, [products]);
+
+  const itemData = useMemo(() => ({
+    products,
+    onProductClick
+  }), [products, onProductClick]);
+
+  return (
+    <VariableSizeList
+      ref={listRef}
+      height={height}
+      width={width}
+      itemCount={products.length}
+      itemSize={getItemSize}
+      itemData={itemData}
+      overscanCount={3}
+    >
+      {ProductListItem}
+    </VariableSizeList>
+  );
+};
+```
+
+**Custom Virtual Scrolling Hook:**
+
+```typescript
+// hooks/useVirtualScroll.ts
+import { useState, useEffect, useMemo, useCallback } from 'react';
+
+interface UseVirtualScrollOptions {
+  itemHeight: number;
+  containerHeight: number;
+  overscan?: number;
+  items: any[];
+}
+
+export const useVirtualScroll = ({
+  itemHeight,
+  containerHeight,
+  overscan = 5,
+  items
+}: UseVirtualScrollOptions) => {
+  const [scrollTop, setScrollTop] = useState(0);
+
+  const visibleRange = useMemo(() => {
+    const itemsPerPage = Math.ceil(containerHeight / itemHeight);
+    const startIndex = Math.floor(scrollTop / itemHeight);
+    const endIndex = Math.min(
+      startIndex + itemsPerPage + overscan,
+      items.length - 1
+    );
+
+    return {
+      start: Math.max(0, startIndex - overscan),
+      end: endIndex
+    };
+  }, [scrollTop, itemHeight, containerHeight, overscan, items.length]);
+
+  const visibleItems = useMemo(() => {
+    return items.slice(visibleRange.start, visibleRange.end + 1);
+  }, [items, visibleRange]);
+
+  const totalHeight = items.length * itemHeight;
+  const offsetY = visibleRange.start * itemHeight;
+
+  const handleScroll = useCallback((event: React.UIEvent<HTMLDivElement>) => {
+    setScrollTop(event.currentTarget.scrollTop);
+  }, []);
+
+  return {
+    visibleItems,
+    totalHeight,
+    offsetY,
+    handleScroll,
+    visibleRange
+  };
+};
+
+// Usage example
+export const CustomVirtualList: React.FC<{
+  items: any[];
+  renderItem: (item: any, index: number) => React.ReactNode;
+}> = ({ items, renderItem }) => {
+  const {
+    visibleItems,
+    totalHeight,
+    offsetY,
+    handleScroll,
+    visibleRange
+  } = useVirtualScroll({
+    itemHeight: 60,
+    containerHeight: 400,
+    overscan: 3,
+    items
+  });
+
+  return (
+    <div
+      className="virtual-scroll-container"
+      style={{ height: 400, overflow: 'auto' }}
+      onScroll={handleScroll}
+    >
+      <div style={{ height: totalHeight, position: 'relative' }}>
+        <div
+          style={{
+            transform: `translateY(${offsetY}px)`,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0
+          }}
+        >
+          {visibleItems.map((item, index) => (
+            <div key={visibleRange.start + index} style={{ height: 60 }}>
+              {renderItem(item, visibleRange.start + index)}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+```
+
+### 5. Bundle Optimization
+
+**Webpack Configuration for Performance:**
+
+```javascript
+// webpack.config.js
+const path = require('path');
+const webpack = require('webpack');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const CompressionPlugin = require('compression-webpack-plugin');
+
+module.exports = {
+  mode: 'production',
+
+  // Enable source maps for debugging
+  devtool: 'source-map',
+
+  // Optimization settings
+  optimization: {
+    // Split chunks for better caching
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        // Vendor libraries
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+          priority: 10,
+        },
+        // React and React DOM
+        react: {
+          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+          name: 'react',
+          chunks: 'all',
+          priority: 20,
+        },
+        // UI libraries
+        ui: {
+          test: /[\\/]node_modules[\\/](@mui|antd|react-bootstrap)[\\/]/,
+          name: 'ui-libs',
+          chunks: 'all',
+          priority: 15,
+        },
+        // Common components
+        common: {
+          name: 'common',
+          minChunks: 2,
+          chunks: 'all',
+          priority: 5,
+          reuseExistingChunk: true,
+        },
+      },
+    },
+
+    // Minimize bundle size
+    usedExports: true,
+    sideEffects: false,
+
+    // Runtime chunk for better caching
+    runtimeChunk: 'single',
+  },
+
+  // Resolve configuration
+  resolve: {
+    // Alias for shorter imports
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      '@components': path.resolve(__dirname, 'src/components'),
+      '@hooks': path.resolve(__dirname, 'src/hooks'),
+      '@utils': path.resolve(__dirname, 'src/utils'),
+    },
+
+    // Extensions to resolve
+    extensions: ['.tsx', '.ts', '.js', '.jsx'],
+
+    // Fallbacks for Node.js modules
+    fallback: {
+      crypto: require.resolve('crypto-browserify'),
+      stream: require.resolve('stream-browserify'),
+      buffer: require.resolve('buffer'),
+    },
+  },
+
+  // Module rules
+  module: {
+    rules: [
+      // TypeScript/JavaScript
+      {
+        test: /\.(ts|tsx|js|jsx)$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                ['@babel/preset-env', { useBuiltIns: 'usage', corejs: 3 }],
+                '@babel/preset-react',
+                '@babel/preset-typescript',
+              ],
+              plugins: [
+                // Tree shaking for lodash
+                'lodash',
+                // Remove console.log in production
+                process.env.NODE_ENV === 'production' && 'transform-remove-console',
+              ].filter(Boolean),
+            },
+          },
+        ],
+      },
+
+      // CSS with optimization
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                localIdentName: '[name]__[local]--[hash:base64:5]',
+              },
+            },
+          },
+          'postcss-loader',
+        ],
+      },
+
+      // Images with optimization
+      {
+        test: /\.(png|jpe?g|gif|svg)$/i,
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 8 * 1024, // 8kb
+          },
+        },
+        generator: {
+          filename: 'images/[name].[hash][ext]',
+        },
+      },
+    ],
+  },
+
+  // Plugins
+  plugins: [
+    // Analyze bundle size
+    process.env.ANALYZE && new BundleAnalyzerPlugin(),
+
+    // Gzip compression
+    new CompressionPlugin({
+      algorithm: 'gzip',
+      test: /\.(js|css|html|svg)$/,
+      threshold: 8192,
+      minRatio: 0.8,
+    }),
+
+    // Define environment variables
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    }),
+
+    // Provide polyfills
+    new webpack.ProvidePlugin({
+      Buffer: ['buffer', 'Buffer'],
+      process: 'process/browser',
+    }),
+  ].filter(Boolean),
+
+  // Performance hints
+  performance: {
+    maxAssetSize: 250000,
+    maxEntrypointSize: 250000,
+    hints: 'warning',
+  },
+};
+```
+
+**Tree Shaking Configuration:**
+
+```json
+// package.json
+{
+  "sideEffects": ["*.css", "*.scss", "./src/polyfills.ts", "./src/analytics.ts"]
+}
+```
+
+```javascript
+// babel.config.js
+module.exports = {
+  presets: [
+    [
+      '@babel/preset-env',
+      {
+        modules: false, // Keep ES modules for tree shaking
+        useBuiltIns: 'usage',
+        corejs: 3,
+      },
+    ],
+    '@babel/preset-react',
+    '@babel/preset-typescript',
+  ],
+  plugins: [
+    // Import only used lodash functions
+    ['lodash', { id: ['lodash'] }],
+
+    // Import only used date-fns functions
+    [
+      'date-fns',
+      {
+        preventFullImport: true,
+      },
+    ],
+
+    // Remove unused imports
+    'babel-plugin-transform-imports',
+  ],
+};
+```
+
+### 6. Image and Asset Optimization
+
+**Responsive Image Component:**
+
+```typescript
+// components/OptimizedImage.tsx
+import { useState, useCallback, useMemo } from 'react';
+
+interface OptimizedImageProps {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  className?: string;
+  lazy?: boolean;
+  responsive?: boolean;
+  quality?: number;
+  format?: 'webp' | 'avif' | 'jpg' | 'png';
+  sizes?: string;
+  priority?: boolean;
+}
+
+export const OptimizedImage: React.FC<OptimizedImageProps> = ({
+  src,
+  alt,
+  width,
+  height,
+  className,
+  lazy = true,
+  responsive = true,
+  quality = 80,
+  format = 'webp',
+  sizes,
+  priority = false
+}) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  // Generate responsive image URLs
+  const imageUrls = useMemo(() => {
+    const baseUrl = src.replace(/\.[^/.]+$/, '');
+    const extension = format;
+
+    return {
+      webp: `${baseUrl}.${extension}?quality=${quality}`,
+      fallback: src,
+      srcSet: responsive ? [
+        `${baseUrl}_400w.${extension}?quality=${quality} 400w`,
+        `${baseUrl}_800w.${extension}?quality=${quality} 800w`,
+        `${baseUrl}_1200w.${extension}?quality=${quality} 1200w`,
+        `${baseUrl}_1600w.${extension}?quality=${quality} 1600w`
+      ].join(', ') : undefined
+    };
+  }, [src, format, quality, responsive]);
+
+  const handleLoad = useCallback(() => {
+    setIsLoaded(true);
+  }, []);
+
+  const handleError = useCallback(() => {
+    setHasError(true);
+  }, []);
+
+  if (hasError) {
+    return (
+      <div className={`image-error ${className}`}>
+        <span>Failed to load image</span>
+      </div>
+    );
+  }
+
+  return (
+    <picture className={className}>
+      {/* Modern formats */}
+      <source
+        srcSet={imageUrls.srcSet}
+        sizes={sizes || '(max-width: 768px) 100vw, 50vw'}
+        type={`image/${format}`}
+      />
+
+      {/* Fallback */}
+      <img
+        src={imageUrls.fallback}
+        srcSet={imageUrls.srcSet}
+        sizes={sizes}
+        alt={alt}
+        width={width}
+        height={height}
+        loading={priority ? 'eager' : lazy ? 'lazy' : 'eager'}
+        decoding="async"
+        onLoad={handleLoad}
+        onError={handleError}
+        className={`optimized-image ${isLoaded ? 'loaded' : 'loading'}`}
+        style={{
+          opacity: isLoaded ? 1 : 0,
+          transition: 'opacity 0.3s ease'
+        }}
+      />
+    </picture>
+  );
+};
+
+// Lazy loading with Intersection Observer
+export const LazyImage: React.FC<OptimizedImageProps> = (props) => {
+  const [shouldLoad, setShouldLoad] = useState(!props.lazy);
+  const imgRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!props.lazy || shouldLoad) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1, rootMargin: '50px' }
+    );
+
+    if (imgRef.current) {
+      observer.observe(imgRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [props.lazy, shouldLoad]);
+
+  return (
+    <div ref={imgRef}>
+      {shouldLoad ? (
+        <OptimizedImage {...props} lazy={false} />
+      ) : (
+        <div
+          className="image-placeholder"
+          style={{
+            width: props.width,
+            height: props.height,
+            backgroundColor: '#f0f0f0'
+          }}
+        />
+      )}
+    </div>
+  );
+};
+```
+
+## Implementation Steps
+
+### Step 1: Measure Current Performance
+
+1. Set up React DevTools Profiler
+2. Implement Web Vitals monitoring
+3. Identify performance bottlenecks
+4. Establish performance baselines
+
+### Step 2: Implement Strategic Memoization
+
+1. Add React.memo to expensive components
+2. Use useMemo for expensive calculations
+3. Apply useCallback for stable references
+4. Avoid over-memoization
+
+### Step 3: Add Code Splitting
+
+1. Implement route-based splitting
+2. Add component-based splitting
+3. Set up preloading strategies
+4. Configure lazy loading
+
+### Step 4: Optimize Large Lists
+
+1. Implement virtual scrolling
+2. Add pagination or infinite scroll
+3. Optimize list item rendering
+4. Use proper keys for list items
+
+### Step 5: Bundle Optimization
+
+1. Configure webpack for production
+2. Implement tree shaking
+3. Split vendor bundles
+4. Compress assets
+
+### Step 6: Monitor and Iterate
+
+1. Set up continuous monitoring
+2. Track performance metrics
+3. Identify new bottlenecks
+4. Continuously optimize
+
+## Common Questions
+
+**Q: Should I memoize every component?**
+A: No, only memoize components that have expensive renders or receive frequently changing props. Over-memoization can actually hurt performance.
+
+**Q: When should I use code splitting?**
+A: Use code splitting for routes, large components that aren't immediately needed, and third-party libraries that are conditionally used.
+
+**Q: How do I know if my optimizations are working?**
+A: Use React DevTools Profiler, measure Web Vitals, and monitor real user metrics. Always measure before and after optimizations.
+
+**Q: What's the difference between useMemo and useCallback?**
+A: useMemo memoizes the result of a computation, while useCallback memoizes the function itself. Use useMemo for expensive calculations and useCallback for stable function references.
+
+**Q: Should I use virtual scrolling for all lists?**
+A: Only use virtual scrolling for lists with hundreds or thousands of items. For smaller lists, the overhead isn't worth it.
+
+## Tools & Resources
+
+### Performance Tools
+
+- **React DevTools Profiler**: Built-in performance profiling
+- **Lighthouse**: Web performance auditing
+- **Web Vitals**: Core performance metrics
+- **Bundle Analyzer**: Webpack bundle analysis
+
+### Optimization Libraries
+
+- **React Window**: Virtual scrolling
+- **React Loadable**: Code splitting
+- **Lodash**: Utility functions with tree shaking
+- **Date-fns**: Lightweight date library
+
+### Monitoring Services
+
+- **Sentry**: Error and performance monitoring
+- **LogRocket**: Session replay and monitoring
+- **New Relic**: Application performance monitoring
+- **DataDog**: Full-stack monitoring
+
+### Build Tools
+
+- **Webpack**: Module bundler
+- **Vite**: Fast build tool
+- **Rollup**: JavaScript bundler
+- **ESBuild**: Fast JavaScript bundler
+
+## Related Topics
+
+- [React Hooks Advanced Patterns](/topics/react-hooks-advanced-patterns)
+- [State Management with Zustand](/topics/state-management-zustand)
+- [React Testing Strategies](/topics/react-testing-strategies)
+- [Frontend Performance Optimization](/topics/frontend-performance-optimization)
+
+## Need Help With Implementation?
+
+React performance optimization requires deep understanding of React internals and modern web performance techniques. Our React experts specialize in building high-performance applications that scale.
+
+**What we can help with:**
+
+- Performance audits and optimization strategies
+- Code splitting and lazy loading implementation
+- Bundle optimization and build configuration
+- Virtual scrolling and large data handling
+- Performance monitoring and alerting setup
+
+[Contact our React performance experts](/contact) to optimize your application's performance.

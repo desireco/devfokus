@@ -1,0 +1,81 @@
+---
+title: 'TypeScript Type Guards and Narrowing: Runtime Type Safety'
+description: 'Master TypeScript type guards, narrowing techniques, and runtime type checking for building robust, type-safe applications.'
+publishDate: 2025-10-14
+category: 'typescript'
+difficulty: 'advanced'
+targetAudience: ['TypeScript Developers', 'Full-Stack Developers', 'Enterprise Developers']
+estimatedReadingTime: 7
+tags: ['typescript', 'type-guards', 'narrowing', 'runtime-type-checking', 'type-safety']
+featured: true
+relatedTopics: ['typescript-advanced-types-generics', 'typescript-api-development', 'typescript-design-patterns']
+relatedServices: ['typescript-architecture-consulting']
+meta:
+  metaTitle: 'TypeScript Type Guards and Narrowing: Complete Runtime Safety Guide'
+  metaDescription: 'Learn TypeScript type guards, narrowing techniques, and runtime type checking. Build robust applications with compile and runtime type safety.'
+  keywords:
+    [
+      'typescript type guards',
+      'type narrowing',
+      'runtime type checking',
+      'typescript type safety',
+      'discriminated unions',
+    ]
+---
+
+# TypeScript Type Guards and Narrowing: Runtime Type Safety
+
+## Quick Summary (TL;DR)
+
+Implement robust type safety using TypeScript type guards including `typeof`, `instanceof`, custom type predicates, and discriminated unions. These techniques narrow union types safely at runtime, prevent type assertion errors, and provide 100% type coverage between compile-time and runtime checking, eliminating entire classes of runtime errors.
+
+## Key Takeaways
+
+- **Type predicates**: Create custom type guards with `parameter is Type` syntax for complex object validation
+- **Discriminated unions**: Use common properties with literal types to distinguish between object types in unions
+- **Built-in guards**: Leverage TypeScript's built-in `typeof` and `instanceof` operators for primitive and instance checking
+- **Assertion functions**: Implement assertion functions for runtime validation that throws errors on invalid input
+
+## The Solution
+
+TypeScript's type system operates at compile time, but runtime data comes from external sources that need validation. Type guards bridge this gap by providing runtime checks that inform TypeScript's type analysis. By implementing proper type guards, you ensure that your type assertions are safe, your code handles all possible input variations, and runtime type errors are eliminated. This creates a comprehensive safety net that protects your application from invalid data while maintaining TypeScript's compile-time guarantees.
+
+## Implementation Steps
+
+1. **Use Built-in Type Guards**
+   Implement `typeof` for primitive types and `instanceof` for class instances, leveraging TypeScript's built-in understanding of these operators.
+
+2. **Create Custom Type Predicates**
+   Define functions with `parameter is Type` return type to create reusable type guards for complex object validation scenarios.
+
+3. **Implement Discriminated Unions**
+   Use literal types on common properties to create distinguishable object types that TypeScript can narrow based on specific property values.
+
+4. **Add Assertion Functions**
+   Create functions that throw on invalid input to guarantee type safety in function bodies while providing clear error messages for debugging.
+
+## Common Questions
+
+**Q: When should I use type guards vs type assertions?**
+Use type guards when Runtime, use type assertions only when you're absolutely certain about the type and the performance cost is critical.
+
+**Q: How do I handle API responses with optional fields?**
+Use discriminated unions with optional properties and create type guards that validate the structure before accessing optional fields.
+
+**Q: Can type guards improve performance?**
+Type guards add minimal runtime overhead but prevent expensive operations on invalid data types, potentially improving overall application performance.
+
+## Tools & Resources
+
+- **io-ts** - Runtime type checking library for TypeScript
+- **zod** - Schema validation with TypeScript type inference
+- **TypeScript Handbook - Type Guards** - Official documentation on type narrowing
+
+## Related Topics
+
+- [TypeScript Advanced Types: Generics and Utility Types](/topics/typescript-advanced-types-generics)
+- [TypeScript API Development: Type-Safe Backend Development](/topics/typescript-api-development)
+
+## Need Help With Implementation?
+
+Implementing comprehensive type guards requires deep understanding of both TypeScript's type system and runtime validation patterns. Built By Dakic specializes in building robust type-safe architectures that handle external data safely and maintain type integrity throughout your application. Our expertise in complex type scenarios can help you eliminate runtime errors and build more reliable applications. Get in touch for a free consultation and let us help you establish comprehensive type safety in your TypeScript projects.

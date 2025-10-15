@@ -1,0 +1,85 @@
+---
+title: 'Preventing Cross-Site Request Forgery (CSRF) Attacks'
+description: 'A guide to understanding and preventing Cross-Site Request Forgery (CSRF) attacks using techniques like anti-CSRF tokens and SameSite cookies.'
+publishDate: '2025-10-14'
+category: 'security-best-practices'
+difficulty: 'intermediate'
+targetAudience: ['Web Developers', 'Software Engineers', 'Security Engineers']
+estimatedReadingTime: 8
+tags: ['csrf', 'web security', 'security', 'owasp']
+featured: false
+relatedTopics:
+  [
+    'understanding-cross-site-scripting-xss-a-guide-to-prevention',
+    'a-guide-to-api-authentication-with-oauth-2-0-and-jwts',
+  ]
+relatedServices: ['application-security-audits', 'secure-development-training']
+meta:
+  metaTitle: 'What is CSRF? A Guide to Preventing Cross-Site Request Forgery'
+  metaDescription: 'Learn how to prevent Cross-Site Request Forgery (CSRF) attacks. This guide explains how CSRF works and covers the most effective defenses, like anti-CSRF tokens.'
+  keywords: ['csrf', 'cross-site request forgery', 'what is csrf', 'csrf protection']
+---
+
+# Preventing Cross-Site Request Forgery (CSRF) Attacks
+
+## Quick Summary (TL;DR)
+
+Cross-Site Request Forgery (CSRF) is an attack that tricks a victim into submitting a malicious request to a web application they are already authenticated with. For example, an attacker could embed a malicious image tag on their website that, when loaded by a victim's browser, silently sends a request to transfer money from the victim's bank account. The primary defense is the **Synchronizer Token Pattern**, where a unique, unpredictable token (an anti-CSRF token) is embedded in every state-changing form and validated on the server, proving the request was intentional.
+
+## Key Takeaways
+
+- **CSRF Abuses Trust**: The attack works because a user's browser automatically includes authentication cookies with requests to a domain. CSRF abuses this trust by forcing the browser to send a forged request to a site where the user is logged in.
+- **It Targets State-Changing Actions**: CSRF attacks are focused on actions that change the state of the application, such as changing a password, making a purchase, or submitting a form. It is not used to steal data, as the attacker cannot see the response.
+- **Anti-CSRF Tokens are the Classic Defense**: The most robust defense is to generate a unique, secret token for each user session, embed it as a hidden field in all forms, and require the server to validate this token on every state-changing request.
+
+## The Solution
+
+A CSRF attack is possible because a browser sends cookies automatically, regardless of where the request was initiated from. The server has no way of knowing if a request to change a user's email was initiated by the user clicking a button on the legitimate site or by an image loading on a malicious site. The solution is to require an additional piece of secret information that only the legitimate site could know: the anti-CSRF token. By embedding this token in the form, the application forces the browser to submit it with the request. Since the attacker's malicious site cannot guess this token, the forged request will be invalid, and the server will reject it.
+
+## Implementation Steps
+
+1.  **Generate a Unique Token per Session**
+    When a user logs in, generate a cryptographically strong, random token and store it in the user's session on the server.
+
+2.  **Embed the Token in All State-Changing Forms**
+    For every HTML form that performs a state-changing action (e.g., POST, PUT, DELETE requests), include the anti-CSRF token as a hidden input field.
+
+    ```html
+    <form action="/update-profile" method="post">
+      <input type="text" name="email" />
+      <input type="hidden" name="csrf_token" value="{{ session_csrf_token }}" />
+      <button type="submit">Update</button>
+    </form>
+    ```
+
+3.  **Verify the Token on the Server**
+    For every incoming state-changing request, your server-side code must compare the token submitted in the form with the token stored in the user's session. If they do not match, or if the token is missing, the request must be rejected.
+
+4.  **Use SameSite Cookies as a Defense-in-Depth**
+    Set the `SameSite` attribute on your session cookies to `Lax` or `Strict`. This is a browser-level defense that prevents the browser from sending cookies along with cross-site requests. While this provides strong protection in modern browsers, it should be used as an additional layer of defense, not as a replacement for anti-CSRF tokens.
+
+## Common Questions
+
+**Q: Do I need anti-CSRF tokens for my JSON APIs?**
+It depends. If your API is authenticated using cookies, then yes, it is vulnerable to CSRF and needs protection. A common method is to require the client to send the token in a custom HTTP header (e.g., `X-CSRF-Token`). If your API is authenticated using a different method, like a bearer token (e.g., JWT) that is not sent automatically by the browser, it is generally not vulnerable to CSRF.
+
+**Q: My framework handles this automatically. Am I safe?**
+Most modern web frameworks (like Ruby on Rails, Django, and Express) have built-in CSRF protection that is enabled by default. In most cases, this is sufficient. However, you should always verify that the protection is enabled and understand how it works, especially for AJAX requests, which can sometimes require extra configuration.
+
+**Q: What is the difference between XSS and CSRF?**
+XSS (Cross-Site Scripting) exploits the trust a user has for a website. CSRF (Cross-Site Request Forgery) exploits the trust a website has for a user's browser. In an XSS attack, the attacker injects their own script into the site. In a CSRF attack, the attacker forces the user's browser to send a request using the user's own credentials.
+
+## Tools & Resources
+
+- **OWASP CSRF Prevention Cheat Sheet**: The definitive guide from OWASP on understanding and mitigating CSRF vulnerabilities.
+- **SameSite Cookies Explained**: A detailed article from web.dev explaining how SameSite cookies work and how they can be used to prevent CSRF.
+- **Your Framework's Documentation**: The best resource for understanding how your specific web framework implements CSRF protection.
+
+## Related Topics
+
+- [Understanding Cross-Site Scripting (XSS): A Guide to Prevention](/category/security-best-practices/understanding-cross-site-scripting-xss-a-guide-to-prevention)
+- [A Guide to API Authentication with OAuth 2.0 and JWTs](/category/security-best-practices/a-guide-to-api-authentication-with-oauth-2-0-and-jwts)
+
+## Need Help With Implementation?
+
+Ensuring your application is protected against common vulnerabilities like CSRF is a fundamental part of secure development. Built By Dakic offers application security audits and secure development training to help your team build robust and resilient software from the ground up. Get in touch for a free consultation.

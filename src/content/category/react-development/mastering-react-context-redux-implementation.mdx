@@ -1,0 +1,539 @@
+---
+title: 'Mastering React context and Redux implementation'
+description: 'Complete guide to React Context API and Redux implementation. Learn when to use each, best practices, and advanced patterns.'
+
+publishDate: '2025-10-14'
+
+category: 'react'
+
+difficulty: 'advanced'
+
+targetAudience: ['senior-react-developers', 'frontend-architects', 'fullstack-developers']
+
+estimatedReadingTime: 12
+
+tags: ['react-context', 'redux', 'state-management', 'redux-toolkit', 'context-api']
+
+featured: true
+
+relatedTopics: ['react-hooks-state-management', 'react-performance-optimization']
+relatedServices: ['state-management-consulting']
+
+meta:
+  metaTitle: 'React Context vs Redux | Complete State Management Guide 2025'
+  metaDescription: 'Master React Context API and Redux implementation. Learn when to use each, best practices, and advanced state management patterns.'
+  keywords: ['react context', 'redux', 'state management', 'redux toolkit', 'context api']
+---
+
+# Mastering React context and Redux implementation
+
+## Technical Overview
+
+React Context API and Redux represent two powerful approaches to state management, each with distinct strengths and use cases. Context API provides built-in state sharing with minimal setup, ideal for moderate complexity applications. Redux offers a predictable state container with powerful dev tools and middleware support, perfect for complex applications with intricate state logic. Understanding both allows you to choose the right tool for each scenario.
+
+## Architecture & Approach
+
+**Context API Architecture:**
+
+- Provider-based state distribution
+- Component-level state consumption with useContext
+- Optimized re-renders with memoized contexts
+- Simple, declarative API with minimal boilerplate
+
+**Redux Architecture:**
+
+- Single source of truth with immutable state
+- Predictable updates with pure reducer functions
+- Middleware for side effects and async operations
+- Powerful dev tools for time-travel debugging
+
+## Implementation Details
+
+### React Context Implementation
+
+**Basic Context Setup:**
+
+```typescript
+// ThemeContext.ts
+interface ThemeContextValue {
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
+  colors: {
+    primary: string;
+    secondary: string;
+    background: string;
+    text: string;
+  };
+}
+
+const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
+
+export const useTheme = (): ThemeContextValue => {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+};
+
+interface ThemeProviderProps {
+  children: React.ReactNode;
+}
+
+export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  const colors = useMemo(() => ({
+    light: {
+      primary: '#007bff',
+      secondary: '#6c757d',
+      background: '#ffffff',
+      text: '#212529',
+    },
+    dark: {
+      primary: '#0d6efd',
+      secondary: '#6c757d',
+      background: '#212529',
+      text: '#ffffff',
+    },
+  }), []);
+
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  }, []);
+
+  const contextValue = useMemo(() => ({
+    theme,
+    toggleTheme,
+    colors: colors[theme],
+  }), [theme, toggleTheme, colors]);
+
+  return (
+    <ThemeContext.Provider value={contextValue}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+```
+
+**Optimized Context for Performance:**
+
+```typescript
+// Split context to prevent unnecessary re-renders
+const AuthStateContext = createContext<AuthState | undefined>(undefined);
+const AuthActionsContext = createContext<AuthActions | undefined>(undefined);
+
+interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+  loading: boolean;
+}
+
+interface AuthActions {
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => void;
+  register: (userData: RegisterData) => Promise<void>;
+}
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [state, setState] = useState<AuthState>({
+    user: null,
+    isAuthenticated: false,
+    loading: false,
+  });
+
+  const actions = useMemo(() => ({
+    login: async (email: string, password: string) => {
+      setState(prev => ({ ...prev, loading: true }));
+      try {
+        const user = await authService.login(email, password);
+        setState({ user, isAuthenticated: true, loading: false });
+      } catch (error) {
+        setState(prev => ({ ...prev, loading: false }));
+        throw error;
+      }
+    },
+    logout: () => {
+      setState({ user: null, isAuthenticated: false, loading: false });
+    },
+    register: async (userData: RegisterData) => {
+      setState(prev => ({ ...prev, loading: true }));
+      try {
+        const user = await authService.register(userData);
+        setState({ user, isAuthenticated: true, loading: false });
+      } catch (error) {
+        setState(prev => ({ ...prev, loading: false }));
+        throw error;
+      }
+    },
+  }), []);
+
+  return (
+    <AuthStateContext.Provider value={state}>
+      <AuthActionsContext.Provider value={actions}>
+        {children}
+      </AuthActionsContext.Provider>
+    </AuthStateContext.Provider>
+  );
+};
+
+export const useAuthState = () => {
+  const context = useContext(AuthStateContext);
+  if (!context) throw new Error('useAuthState must be used within AuthProvider');
+  return context;
+};
+
+export const useAuthActions = () => {
+  const context = useContext(AuthActionsContext);
+  if (!context) throw new Error('useAuthActions must be used within AuthProvider');
+  return context;
+};
+```
+
+### Redux Implementation with Redux Toolkit
+
+**Store Setup:**
+
+```typescript
+// store.ts
+import { configureStore } from '@reduxjs/toolkit';
+import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
+import authSlice from './slices/authSlice';
+import productsSlice from './slices/productsSlice';
+import uiSlice from './slices/uiSlice';
+
+export const store = configureStore({
+  reducer: {
+    auth: authSlice,
+    products: productsSlice,
+    ui: uiSlice,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['persist/PERSIST'],
+      },
+    }),
+});
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+// Typed hooks
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+```
+
+**Auth Slice with Redux Toolkit:**
+
+```typescript
+// slices/authSlice.ts
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+
+interface User {
+  id: string;
+  email: string;
+  name: string;
+}
+
+interface AuthState {
+  user: User | null;
+  token: string | null;
+  loading: boolean;
+  error: string | null;
+}
+
+const initialState: AuthState = {
+  user: null,
+  token: localStorage.getItem('token'),
+  loading: false,
+  error: null,
+};
+
+// Async thunks
+export const loginUser = createAsyncThunk(
+  'auth/login',
+  async ({ email, password }: { email: string; password: string }) => {
+    const response = await authService.login(email, password);
+    localStorage.setItem('token', response.token);
+    return response;
+  }
+);
+
+export const registerUser = createAsyncThunk(
+  'auth/register',
+  async (userData: { email: string; password: string; name: string }) => {
+    const response = await authService.register(userData);
+    localStorage.setItem('token', response.token);
+    return response;
+  }
+);
+
+const authSlice = createSlice({
+  name: 'auth',
+  initialState,
+  reducers: {
+    logout: (state) => {
+      state.user = null;
+      state.token = null;
+      localStorage.removeItem('token');
+    },
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // Login
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Login failed';
+      })
+      // Register
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Registration failed';
+      });
+  },
+});
+
+export const { logout, clearError } = authSlice.actions;
+export default authSlice.reducer;
+```
+
+**Advanced Middleware:**
+
+```typescript
+// middleware/loggerMiddleware.ts
+import { Middleware } from '@reduxjs/toolkit';
+
+export const loggerMiddleware: Middleware = (store) => (next) => (action) => {
+  console.group(`Action: ${action.type}`);
+  console.log('Previous State:', store.getState());
+  console.log('Action:', action);
+
+  const result = next(action);
+
+  console.log('Next State:', store.getState());
+  console.groupEnd();
+
+  return result;
+};
+
+// middleware/persistenceMiddleware.ts
+export const persistenceMiddleware: Middleware = (store) => (next) => (action) => {
+  const result = next(action);
+
+  // Persist specific state to localStorage
+  const state = store.getState();
+  if (action.type.startsWith('auth/')) {
+    localStorage.setItem('authState', JSON.stringify(state.auth));
+  }
+
+  return result;
+};
+```
+
+## Advanced Techniques
+
+### Context with Reducers Pattern
+
+**Combining Context with useReducer:**
+
+```typescript
+interface AppState {
+  user: User | null;
+  cart: CartItem[];
+  loading: boolean;
+}
+
+type AppAction =
+  | { type: 'SET_USER'; payload: User }
+  | { type: 'ADD_TO_CART'; payload: CartItem }
+  | { type: 'REMOVE_FROM_CART'; payload: string }
+  | { type: 'SET_LOADING'; payload: boolean };
+
+const appReducer = (state: AppState, action: AppAction): AppState => {
+  switch (action.type) {
+    case 'SET_USER':
+      return { ...state, user: action.payload };
+    case 'ADD_TO_CART':
+      return {
+        ...state,
+        cart: [...state.cart, action.payload]
+      };
+    case 'REMOVE_FROM_CART':
+      return {
+        ...state,
+        cart: state.cart.filter(item => item.id !== action.payload)
+      };
+    case 'SET_LOADING':
+      return { ...state, loading: action.payload };
+    default:
+      return state;
+  }
+};
+
+const AppContext = createContext<{
+  state: AppState;
+  dispatch: React.Dispatch<AppAction>;
+} | null>(null);
+
+export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [state, dispatch] = useReducer(appReducer, {
+    user: null,
+    cart: [],
+    loading: false,
+  });
+
+  return (
+    <AppContext.Provider value={{ state, dispatch }}>
+      {children}
+    </AppContext.Provider>
+  );
+};
+```
+
+### Redux with RTK Query
+
+**API Integration with RTK Query:**
+
+```typescript
+// api/productsApi.ts
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
+export const productsApi = createApi({
+  reducerPath: 'productsApi',
+  baseQuery: fetchBaseQuery({
+    baseUrl: '/api/products',
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).auth.token;
+      if (token) {
+        headers.set('authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  tagTypes: ['Product'],
+  endpoints: (builder) => ({
+    getProducts: builder.query<Product[], void>({
+      query: () => '',
+      providesTags: ['Product'],
+    }),
+    getProduct: builder.query<Product, string>({
+      query: (id) => `/${id}`,
+      providesTags: (result, error, id) => [{ type: 'Product', id }],
+    }),
+    createProduct: builder.mutation<Product, Partial<Product>>({
+      query: (product) => ({
+        url: '',
+        method: 'POST',
+        body: product,
+      }),
+      invalidatesTags: ['Product'],
+    }),
+    updateProduct: builder.mutation<Product, { id: string; updates: Partial<Product> }>({
+      query: ({ id, updates }) => ({
+        url: `/${id}`,
+        method: 'PUT',
+        body: updates,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Product', id }],
+    }),
+  }),
+});
+
+export const { useGetProductsQuery, useGetProductQuery, useCreateProductMutation, useUpdateProductMutation } =
+  productsApi;
+```
+
+## Performance & Optimization
+
+### Context Optimization
+
+**Memoized Context Values:**
+
+```typescript
+const OptimizedProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  // Split contexts to prevent unnecessary re-renders
+  const userValue = useMemo(() => ({ user, setUser }), [user]);
+  const themeValue = useMemo(() => ({ theme, setTheme }), [theme]);
+
+  return (
+    <UserContext.Provider value={userValue}>
+      <ThemeContext.Provider value={themeValue}>
+        {children}
+      </ThemeContext.Provider>
+    </UserContext.Provider>
+  );
+};
+```
+
+### Redux Optimization
+
+**Selector Optimization:**
+
+```typescript
+// selectors.ts
+import { createSelector } from '@reduxjs/toolkit';
+
+const selectProducts = (state: RootState) => state.products.items;
+const selectFilter = (state: RootState) => state.products.filter;
+
+export const selectFilteredProducts = createSelector([selectProducts, selectFilter], (products, filter) => {
+  return products.filter((product) => product.name.toLowerCase().includes(filter.toLowerCase()));
+});
+
+export const selectProductById = createSelector(
+  [selectProducts, (state: RootState, productId: string) => productId],
+  (products, productId) => products.find((product) => product.id === productId)
+);
+```
+
+## Common Questions
+
+**Q: When should I use Context vs Redux?**
+Use Context for simple to moderate state sharing (theme, auth, UI state). Use Redux for complex state logic, time-travel debugging, middleware needs, or when you have large amounts of state with complex interactions.
+
+**Q: Can I use both Context and Redux together?**
+Yes! Many applications use both. Context for simple global state (theme, auth) and Redux for complex application state (data fetching, complex business logic).
+
+**Q: How do I prevent re-renders with Context?**
+Split contexts by concern, memoize context values, use separate contexts for state and actions, and consider using libraries like Zustand for more granular control.
+
+## Tools & Resources
+
+- **Redux DevTools** - Essential for Redux debugging and time-travel
+- **React DevTools** - Monitor Context updates and re-renders
+- **Redux Toolkit** - Official Redux utilities for simpler development
+- **Zustand** - Lightweight alternative to both Context and Redux
+
+## Related Topics
+
+- [React Hooks State Management](/topics/react-hooks-state-management)
+- [React Performance Optimization](/topics/react-performance-optimization)
+
+## Need Help With Implementation?
+
+Choosing between Context and Redux, or implementing both effectively, requires understanding your application's complexity, team expertise, and long-term maintenance needs. Built By Dakic specializes in state management architecture, helping teams implement scalable, maintainable state solutions that grow with their applications. Get in touch for a free consultation and discover how we can help you build robust state management strategies.

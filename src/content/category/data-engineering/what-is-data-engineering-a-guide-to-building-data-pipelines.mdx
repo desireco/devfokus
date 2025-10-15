@@ -1,0 +1,73 @@
+---
+title: 'What is Data Engineering? A Guide to Building Data Pipelines'
+description: 'An introduction to the field of data engineering, explaining the role of a data engineer and the core concepts behind building reliable and scalable data pipelines.'
+publishDate: '2025-10-14'
+category: 'data-engineering'
+difficulty: 'beginner'
+targetAudience: ['Aspiring Data Engineers', 'Software Engineers', 'Data Analysts']
+estimatedReadingTime: 9
+tags: ['data engineering', 'data pipelines', 'etl', 'big data']
+featured: true
+relatedTopics: ['etl-vs-elt-in-data-pipelines', 'an-introduction-to-the-modern-data-warehouse']
+relatedServices: ['data-engineering-consulting', 'cloud-data-platforms']
+meta:
+  metaTitle: "What is Data Engineering? A Beginner's Guide to Data Pipelines"
+  metaDescription: 'Learn the fundamentals of data engineering. This guide explains the role of a data engineer and the process of building data pipelines to move and transform data.'
+  keywords: ['data engineering', 'what is a data engineer', 'data pipelines', 'etl']
+---
+
+# What is Data Engineering? A Guide to Building Data Pipelines
+
+## Quick Summary (TL;DR)
+
+Data engineering is the discipline of designing, building, and maintaining the systems and infrastructure that allow an organization to collect, store, process, and analyze large volumes of data. The primary output of a data engineer's work is a **data pipeline**, an automated process that moves data from a source system (like an application database or a third-party API) to a destination system (like a data warehouse), often transforming it along the way. Data engineers provide the clean, reliable, and accessible data that data scientists and analysts depend on.
+
+## Key Takeaways
+
+- **Data Engineers Build the Foundation**: If data is the new oil, data engineers build the refineries. They are responsible for the infrastructure and plumbing that makes data useful.
+- **The Core Task is Building Data Pipelines**: A data pipeline is a series of automated steps. A typical pipeline might **Extract** data from a source, **Transform** it into a clean and usable format, and **Load** it into a data warehouse for analysis. This is known as an ETL pipeline.
+- **It's a Software Engineering Discipline**: Modern data engineering is fundamentally a software engineering role. It involves writing code, using version control, automating tests, and managing infrastructure as code.
+
+## The Solution: From Raw Data to Actionable Insights
+
+Organizations today collect vast amounts of raw data from many different sources. This data is often messy, inconsistent, and stored in formats that are not suitable for analysis. Data engineering solves this problem by creating robust, automated systems that systematically clean, structure, and centralize this data. By building reliable data pipelines, data engineers empower the rest of the organization to make data-driven decisions, build machine learning models, and generate business intelligence reports, all based on a foundation of high-quality, trustworthy data.
+
+## A Typical Data Pipeline: ETL
+
+ETL (Extract, Transform, Load) is the most traditional and widely understood data pipeline pattern.
+
+1.  **Extract**: The first step is to extract data from its source. This could be querying a production database, pulling data from a SaaS API (like Salesforce), or reading log files from a server.
+
+2.  **Transform**: This is where the raw data is cleaned and prepared. Common transformations include:
+    - Filtering out irrelevant data.
+    - Cleaning up inconsistencies (e.g., standardizing date formats).
+    - Enriching the data by joining it with data from other sources.
+    - Aggregating data to a higher level (e.g., calculating daily sales totals).
+
+3.  **Load**: The final step is to load the transformed, analysis-ready data into a target system. This is most often a cloud data warehouse like Google BigQuery, Amazon Redshift, or Snowflake.
+
+## Common Questions
+
+**Q: What is the difference between a data engineer and a data scientist?**
+A data engineer builds the infrastructure and pipelines to make data available. A data scientist then uses that data to perform analysis, build predictive models, and answer business questions. The data engineer's work comes first; they provide the clean data that the data scientist needs.
+
+**Q: What is ELT?**
+ELT (Extract, Load, Transform) is a modern variation of the ETL pattern, made popular by cloud data warehouses. In ELT, you extract the raw data and load it directly into the data warehouse. The transformation step then happens _inside_ the warehouse using its powerful SQL engine. This approach is often simpler and more flexible than traditional ETL.
+
+**Q: What skills does a data engineer need?**
+A modern data engineer needs a blend of skills: strong programming (especially in Python and SQL), knowledge of cloud infrastructure (AWS, GCP, Azure), experience with big data technologies (like Apache Spark), and an understanding of data modeling and database design.
+
+## Tools & Resources
+
+- **Apache Airflow**: A popular open-source platform for programmatically authoring, scheduling, and monitoring data pipelines and workflows.
+- **dbt (Data Build Tool)**: A command-line tool that enables data analysts and engineers to transform data in their warehouse more effectively. It is the "T" in ELT.
+- **Snowflake / Google BigQuery / Amazon Redshift**: The leading cloud data warehouse platforms that provide the storage and compute power for modern analytics.
+
+## Related Topics
+
+- [ETL vs. ELT: Understanding the Key Differences in Data Pipelines](/category/data-engineering/etl-vs-elt-in-data-pipelines)
+- [An Introduction to the Modern Data Warehouse](/category/data-engineering/an-introduction-to-the-modern-data-warehouse)
+
+## Need Help With Implementation?
+
+Building a modern, scalable data platform is a complex but essential investment for any data-driven organization. Built By Dakic provides expert data engineering consulting to help you design and implement robust data pipelines, select the right tools, and build a data infrastructure that can grow with your business. Get in touch for a free consultation.

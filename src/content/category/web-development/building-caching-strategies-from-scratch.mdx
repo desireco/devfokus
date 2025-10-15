@@ -1,0 +1,307 @@
+---
+title: 'Building caching strategies from scratch'
+description: 'Learn how to build effective caching strategies from scratch. Master browser caching, CDN caching, API caching, and database caching for optimal performance.'
+
+publishDate: '2025-10-14'
+
+category: 'web-development'
+
+difficulty: 'advanced'
+
+targetAudience: ['full-stack-developers', 'frontend-engineers', 'backend-engineers']
+
+estimatedReadingTime: 10
+
+tags: ['caching', 'performance-optimization', 'cdn', 'database-optimization', 'web-performance']
+
+featured: true
+
+relatedTopics: ['web-performance-optimization', 'database-optimization']
+relatedServices: ['performance-consulting']
+
+meta:
+  metaTitle: 'Building Caching Strategies from Scratch | Performance Optimization Guide'
+  metaDescription: 'Complete guide to building caching strategies from scratch. Learn browser, CDN, API, and database caching for optimal web performance.'
+  keywords: ['caching strategies', 'web performance', 'CDN caching', 'API caching', 'database optimization']
+---
+
+# Building caching strategies from scratch
+
+## Technical Overview
+
+Caching is the process of storing frequently accessed data in faster storage locations to reduce retrieval time and improve system performance. A comprehensive caching strategy involves multiple layers working together: browser caching for static assets, CDN caching for global content delivery, API caching for dynamic data, and database caching for query optimization. Each layer serves different purposes and requires specific implementation approaches.
+
+## Architecture & Approach
+
+Effective caching architecture follows a hierarchical approach where data flows through multiple cache layers before reaching the original source. The strategy begins with browser caching for static assets, moves to edge caching through CDNs, implements application-level caching for API responses, and utilizes database caching for frequently accessed data. This multi-layer approach ensures optimal performance while maintaining data consistency and freshness.
+
+## Implementation Details
+
+### Browser Caching Implementation
+
+Browser caching stores static assets directly in users' browsers, eliminating network requests for repeated visits. Implement proper cache headers to control browser behavior:
+
+```javascript
+// Express.js example for setting cache headers
+app.use(
+  express.static('public', {
+    maxAge: '1y', // Cache for 1 year
+    etag: true, // Enable ETag validation
+    lastModified: true, // Enable Last-Modified header
+  })
+);
+
+// API response caching
+app.get('/api/data', (req, res) => {
+  res.set({
+    'Cache-Control': 'public, max-age=300', // 5 minutes
+    ETag: generateETag(data),
+    'Last-Modified': new Date().toUTCString(),
+  });
+  res.json(data);
+});
+```
+
+### CDN Caching Strategy
+
+Content Delivery Networks cache content at edge locations globally, reducing latency for users worldwide. Configure CDN caching rules based on content type and update frequency:
+
+```javascript
+// Cloudflare Workers example for cache control
+addEventListener('fetch', (event) => {
+  event.respondWith(handleRequest(event.request));
+});
+
+async function handleRequest(request) {
+  const url = new URL(request.url);
+
+  // Cache static assets aggressively
+  if (url.pathname.match(/\.(css|js|png|jpg|svg)$/)) {
+    const cache = caches.default;
+    const cacheKey = new Request(request.url, request);
+
+    let response = await cache.match(cacheKey);
+    if (!response) {
+      response = await fetch(request);
+      response = new Response(response.body, {
+        ...response,
+        headers: {
+          ...response.headers,
+          'Cache-Control': 'public, max-age=31536000, immutable',
+        },
+      });
+      event.waitUntil(cache.put(cacheKey, response.clone()));
+    }
+    return response;
+  }
+
+  return fetch(request);
+}
+```
+
+### API Response Caching
+
+Implement intelligent API caching to reduce database load and improve response times. Use cache keys based on request parameters and implement cache invalidation strategies:
+
+```javascript
+// Redis-based API caching
+const redis = require('redis');
+const client = redis.createClient();
+
+async function getCachedData(key, fetchFunction, ttl = 300) {
+  try {
+    const cached = await client.get(key);
+    if (cached) {
+      return JSON.parse(cached);
+    }
+
+    const data = await fetchFunction();
+    await client.setex(key, ttl, JSON.stringify(data));
+    return data;
+  } catch (error) {
+    // Fallback to direct fetch if cache fails
+    return fetchFunction();
+  }
+}
+
+// Usage in API endpoint
+app.get('/api/users/:id', async (req, res) => {
+  const cacheKey = `user:${req.params.id}`;
+  const user = await getCachedData(cacheKey, () => database.getUserById(req.params.id));
+  res.json(user);
+});
+```
+
+### Database Query Caching
+
+Database caching reduces query execution time by storing frequently accessed query results. Implement query result caching and connection pooling:
+
+```javascript
+// Database query caching with PostgreSQL
+const { Pool } = require('pg');
+const pool = new Pool({
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
+});
+
+async function getCachedQuery(query, params, ttl = 600) {
+  const cacheKey = `query:${Buffer.from(query + JSON.stringify(params)).toString('base64')}`;
+
+  return getCachedData(
+    cacheKey,
+    async () => {
+      const client = await pool.connect();
+      try {
+        const result = await client.query(query, params);
+        return result.rows;
+      } finally {
+        client.release();
+      }
+    },
+    ttl
+  );
+}
+```
+
+## Advanced Techniques
+
+### Cache Invalidation Patterns
+
+Implement sophisticated cache invalidation strategies to maintain data consistency:
+
+```javascript
+// Tag-based cache invalidation
+class CacheManager {
+  constructor() {
+    this.tagMap = new Map(); // Maps tags to cache keys
+  }
+
+  async set(key, value, tags = [], ttl = 300) {
+    // Store the value
+    await redis.setex(key, ttl, JSON.stringify(value));
+
+    // Map tags to this key
+    for (const tag of tags) {
+      if (!this.tagMap.has(tag)) {
+        this.tagMap.set(tag, new Set());
+      }
+      this.tagMap.get(tag).add(key);
+    }
+  }
+
+  async invalidateTag(tag) {
+    const keys = this.tagMap.get(tag) || new Set();
+    for (const key of keys) {
+      await redis.del(key);
+    }
+    this.tagMap.delete(tag);
+  }
+}
+```
+
+### Stale-While-Revalidate
+
+Implement stale-while-revalidate patterns for better user experience:
+
+```javascript
+async function getStaleWhileRevalidate(key, fetchFunction, ttl = 300, swrTtl = 86400) {
+  const cached = await redis.get(key);
+
+  if (cached) {
+    const data = JSON.parse(cached);
+    const ttl = await redis.ttl(key);
+
+    // If cache is fresh, return immediately
+    if (ttl > 60) {
+      return data;
+    }
+
+    // If cache is stale, return stale data and refresh in background
+    refreshInBackground(key, fetchFunction, ttl);
+    return data;
+  }
+
+  // No cache, fetch fresh data
+  const data = await fetchFunction();
+  await redis.setex(key, ttl, JSON.stringify(data));
+  return data;
+}
+
+async function refreshInBackground(key, fetchFunction, ttl) {
+  try {
+    const data = await fetchFunction();
+    await redis.setex(key, ttl, JSON.stringify(data));
+  } catch (error) {
+    console.error('Background refresh failed:', error);
+  }
+}
+```
+
+## Performance & Optimization
+
+Monitor cache performance using metrics like hit rate, miss rate, and response times. Implement cache warming strategies for predictable traffic patterns:
+
+```javascript
+// Cache warming for predictable content
+async function warmCache() {
+  const popularContent = await getPopularContent();
+
+  for (const item of popularContent) {
+    const cacheKey = `content:${item.id}`;
+    await getCachedData(cacheKey, () => fetchContent(item.id), 3600);
+  }
+}
+
+// Schedule cache warming
+setInterval(warmCache, 300000); // Every 5 minutes
+```
+
+## Troubleshooting
+
+Common caching issues include cache stampede, stale data, and memory leaks. Implement rate limiting and request coalescing to prevent cache stampede:
+
+```javascript
+// Request coalescing to prevent cache stampede
+const pendingRequests = new Map();
+
+async function getWithCoalescing(key, fetchFunction) {
+  if (pendingRequests.has(key)) {
+    return pendingRequests.get(key);
+  }
+
+  const promise = fetchFunction().finally(() => {
+    pendingRequests.delete(key);
+  });
+
+  pendingRequests.set(key, promise);
+  return promise;
+}
+```
+
+## Common Questions
+
+**Q: How do I handle cache invalidation for dynamic content?**
+Implement tag-based invalidation, version-based cache keys, or time-based expiration. Use webhooks or database triggers to automatically invalidate related caches when data changes.
+
+**Q: What's the difference between CDN caching and browser caching?**
+CDN caching stores content at edge locations globally, while browser caching stores content locally on users' devices. CDN caching improves performance for all users, while browser caching benefits repeat visitors.
+
+**Q: How do I cache personalized content?**
+Use edge-side includes (ESI), vary cache by user segments, or implement personalized caching at the application level. Avoid caching highly personalized data at the CDN level.
+
+## Tools & Resources
+
+- **Redis** - In-memory data structure store for application caching
+- **Varnish Cache** - HTTP accelerator for web application caching
+- **Cloudflare CDN** - Global content delivery with intelligent caching
+- **New Relic** - Performance monitoring for cache hit rates and response times
+
+## Related Topics
+
+- [Web Performance Optimization](/topics/web-performance-optimization)
+- [Database Optimization Techniques](/topics/database-optimization)
+
+## Need Help With Implementation?
+
+Building effective caching strategies requires understanding your application's specific traffic patterns, data characteristics, and performance requirements. Built By Dakic specializes in designing and implementing comprehensive caching solutions that improve performance while maintaining data consistency. Get in touch for a free consultation and let's discuss how we can optimize your application's caching strategy.

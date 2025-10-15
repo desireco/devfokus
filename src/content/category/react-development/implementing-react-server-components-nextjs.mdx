@@ -1,0 +1,610 @@
+---
+title: 'Implementing React server components with Next.js'
+description: 'Complete guide to implementing React Server Components with Next.js 13+. Learn RSC patterns, best practices, and migration strategies.'
+
+publishDate: '2025-10-14'
+
+category: 'react'
+
+difficulty: 'advanced'
+
+targetAudience: ['nextjs-developers', 'fullstack-engineers', 'frontend-architects']
+
+estimatedReadingTime: 11
+
+tags: ['react-server-components', 'nextjs', 'rsc', 'server-components', 'app-router']
+
+featured: true
+
+relatedTopics: ['react-performance-optimization', 'react-hooks-state-management']
+relatedServices: ['nextjs-development']
+
+meta:
+  metaTitle: 'React Server Components Next.js Guide | RSC Implementation 2025'
+  metaDescription: 'Complete guide to implementing React Server Components with Next.js 13+. Learn RSC patterns, migration strategies, and best practices.'
+  keywords: ['react server components', 'nextjs rsc', 'server components', 'nextjs app router']
+---
+
+# Implementing React server components with Next.js
+
+## Technical Overview
+
+React Server Components (RSC) represent a paradigm shift in React development, allowing components to run exclusively on the server. With Next.js 13+'s App Router, RSC enables zero-JavaScript by default, direct data access, and improved performance. Server components can access backend resources directly, maintain state on the server, and send pre-rendered HTML to the client, while client components handle interactivity.
+
+## Architecture & Approach
+
+**Server Components Architecture:**
+
+- Run exclusively on the server during rendering
+- Have zero JavaScript footprint on the client
+- Can directly access databases, APIs, and file systems
+- Maintain state across requests on the server
+- Cannot use React hooks or browser APIs
+
+**Client Components Architecture:**
+
+- Run on both server (for SSR) and client
+- Can use React hooks, event handlers, and browser APIs
+- Have JavaScript bundle sent to client
+- Can be hydrated for interactivity
+- Marked with 'use client' directive
+
+## Implementation Details
+
+### Core Server Component Patterns
+
+**Basic Server Component:**
+
+```typescript
+// app/posts/page.tsx
+import { db } from '@/lib/db';
+import { PostCard } from '@/components/PostCard';
+
+export default async function PostsPage() {
+  // Direct database access - no API calls needed
+  const posts = await db.post.findMany({
+    include: {
+      author: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-8">Latest Posts</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {posts.map((post) => (
+          <PostCard key={post.id} post={post} />
+        ))}
+      </div>
+
+      {posts.length === 0 && (
+        <p className="text-center text-gray-500 mt-8">
+          No posts found. Be the first to write one!
+        </p>
+      )}
+    </div>
+  );
+}
+```
+
+**Server Component with Data Fetching:**
+
+```typescript
+// app/posts/[slug]/page.tsx
+import { notFound } from 'next/navigation';
+import { db } from '@/lib/db';
+import { MarkdownRenderer } from '@/components/MarkdownRenderer';
+import { CommentSection } from '@/components/CommentSection';
+
+interface PostPageProps {
+  params: {
+    slug: string;
+  };
+}
+
+export default async function PostPage({ params }: PostPageProps) {
+  const post = await db.post.findUnique({
+    where: {
+      slug: params.slug,
+      published: true,
+    },
+    include: {
+      author: {
+        select: {
+          name: true,
+          email: true,
+          bio: true,
+        },
+      },
+      tags: true,
+    },
+  });
+
+  if (!post) {
+    notFound();
+  }
+
+  // Increment view count
+  await db.post.update({
+    where: { id: post.id },
+    data: { views: { increment: 1 } },
+  });
+
+  return (
+    <article className="max-w-4xl mx-auto px-4 py-8">
+      <header className="mb-8">
+        <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+
+        <div className="flex items-center gap-4 text-gray-600">
+          <span>By {post.author.name}</span>
+          <span>•</span>
+          <time dateTime={post.createdAt.toISOString()}>
+            {new Date(post.createdAt).toLocaleDateString()}
+          </time>
+          <span>•</span>
+          <span>{post.views} views</span>
+        </div>
+
+        <div className="flex gap-2 mt-4">
+          {post.tags.map((tag) => (
+            <span
+              key={tag.id}
+              className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+            >
+              {tag.name}
+            </span>
+          ))}
+        </div>
+      </header>
+
+      <div className="prose prose-lg max-w-none mb-12">
+        <MarkdownRenderer content={post.content} />
+      </div>
+
+      {/* Client component for interactivity */}
+      <CommentSection postId={post.id} />
+    </article>
+  );
+}
+```
+
+### Client Component Integration
+
+**Interactive Client Component:**
+
+```typescript
+// components/CommentSection.tsx
+'use client'; // This directive makes it a client component
+
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+
+interface Comment {
+  id: string;
+  content: string;
+  author: {
+    name: string;
+    email: string;
+  };
+  createdAt: string;
+}
+
+interface CommentSectionProps {
+  postId: string;
+}
+
+export function CommentSection({ postId }: CommentSectionProps) {
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    fetchComments();
+  }, [postId]);
+
+  const fetchComments = async () => {
+    try {
+      const response = await fetch(`/api/posts/${postId}/comments`);
+      const data = await response.json();
+      setComments(data);
+    } catch (error) {
+      console.error('Failed to fetch comments:', error);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim() || !session) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/posts/${postId}/comments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content: newComment }),
+      });
+
+      if (response.ok) {
+        setNewComment('');
+        fetchComments();
+      }
+    } catch (error) {
+      console.error('Failed to post comment:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <section className="border-t pt-8">
+      <h2 className="text-2xl font-bold mb-6">Comments</h2>
+
+      {/* Comment Form */}
+      {session ? (
+        <form onSubmit={handleSubmit} className="mb-8">
+          <textarea
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Write a comment..."
+            className="w-full p-4 border rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            rows={4}
+          />
+          <button
+            type="submit"
+            disabled={loading || !newComment.trim()}
+            className="mt-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? 'Posting...' : 'Post Comment'}
+          </button>
+        </form>
+      ) : (
+        <p className="mb-8 text-gray-600">
+          Please <a href="/api/auth/signin" className="text-blue-600 hover:underline">sign in</a> to comment.
+        </p>
+      )}
+
+      {/* Comments List */}
+      <div className="space-y-4">
+        {comments.map((comment) => (
+          <div key={comment.id} className="bg-gray-50 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="font-semibold">{comment.author.name}</span>
+              <time className="text-sm text-gray-500">
+                {new Date(comment.createdAt).toLocaleDateString()}
+              </time>
+            </div>
+            <p className="text-gray-700">{comment.content}</p>
+          </div>
+        ))}
+
+        {comments.length === 0 && (
+          <p className="text-center text-gray-500 py-8">
+            No comments yet. Be the first to comment!
+          </p>
+        )}
+      </div>
+    </section>
+  );
+}
+```
+
+### Server Actions Integration
+
+**Server Actions for Mutations:**
+
+```typescript
+// app/posts/[slug]/actions.ts
+'use server';
+
+import { revalidatePath } from 'next/cache';
+import { db } from '@/lib/db';
+import { redirect } from 'next/navigation';
+
+export async function likePost(postId: string, userId: string) {
+  try {
+    // Check if already liked
+    const existingLike = await db.like.findUnique({
+      where: {
+        postId_userId: {
+          postId,
+          userId,
+        },
+      },
+    });
+
+    if (existingLike) {
+      // Unlike
+      await db.like.delete({
+        where: { id: existingLike.id },
+      });
+    } else {
+      // Like
+      await db.like.create({
+        data: {
+          postId,
+          userId,
+        },
+      });
+    }
+
+    // Revalidate the post page to show updated like count
+    revalidatePath(`/posts/${postId}`);
+
+    return { success: true, liked: !existingLike };
+  } catch (error) {
+    console.error('Failed to toggle like:', error);
+    return { success: false, error: 'Failed to toggle like' };
+  }
+}
+
+export async function addComment(postId: string, content: string, userId: string) {
+  try {
+    const comment = await db.comment.create({
+      data: {
+        content,
+        postId,
+        userId,
+      },
+      include: {
+        author: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    revalidatePath(`/posts/${postId}`);
+    return { success: true, comment };
+  } catch (error) {
+    console.error('Failed to add comment:', error);
+    return { success: false, error: 'Failed to add comment' };
+  }
+}
+```
+
+**Using Server Actions in Components:**
+
+```typescript
+// components/LikeButton.tsx
+'use client';
+
+import { useTransition } from 'react';
+import { likePost } from '@/app/posts/[slug]/actions';
+import { Heart } from 'lucide-react';
+
+interface LikeButtonProps {
+  postId: string;
+  userId: string;
+  isLiked: boolean;
+  likeCount: number;
+}
+
+export function LikeButton({ postId, userId, isLiked, likeCount }: LikeButtonProps) {
+  const [isPending, startTransition] = useTransition();
+  const [liked, setLiked] = useState(isLiked);
+  const [count, setCount] = useState(likeCount);
+
+  const handleLike = () => {
+    startTransition(async () => {
+      const result = await likePost(postId, userId);
+      if (result.success) {
+        setLiked(result.liked);
+        setCount(prev => result.liked ? prev + 1 : prev - 1);
+      }
+    });
+  };
+
+  return (
+    <button
+      onClick={handleLike}
+      disabled={isPending}
+      className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+        liked
+          ? 'bg-red-100 text-red-600 hover:bg-red-200'
+          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+      } disabled:opacity-50`}
+    >
+      <Heart className={`w-4 h-4 ${liked ? 'fill-current' : ''}`} />
+      <span>{count}</span>
+      {isPending && <span className="text-sm">...</span>}
+    </button>
+  );
+}
+```
+
+## Advanced Techniques
+
+### Streaming and Loading States
+
+**Streaming with Suspense:**
+
+```typescript
+// app/dashboard/page.tsx
+import { Suspense } from 'react';
+import { UserStats } from '@/components/UserStats';
+import { RecentActivity } from '@/components/RecentActivity';
+import { Notifications } from '@/components/Notifications';
+
+export default function DashboardPage() {
+  return (
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold">Dashboard</h1>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <Suspense
+            fallback={
+              <div className="h-64 bg-gray-100 rounded-lg animate-pulse" />
+            }
+          >
+            <UserStats />
+          </Suspense>
+
+          <Suspense
+            fallback={
+              <div className="h-96 bg-gray-100 rounded-lg animate-pulse" />
+            }
+          >
+            <RecentActivity />
+          </Suspense>
+        </div>
+
+        <div>
+          <Suspense
+            fallback={
+              <div className="h-48 bg-gray-100 rounded-lg animate-pulse" />
+            }
+          >
+            <Notifications />
+          </Suspense>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+**Loading UI with loading.tsx:**
+
+```typescript
+// app/posts/loading.tsx
+export default function PostsLoading() {
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-8">Latest Posts</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="bg-white rounded-lg shadow-sm p-6">
+            <div className="h-4 bg-gray-200 rounded mb-4 w-3/4 animate-pulse" />
+            <div className="h-3 bg-gray-200 rounded mb-2 animate-pulse" />
+            <div className="h-3 bg-gray-200 rounded mb-2 w-5/6 animate-pulse" />
+            <div className="h-3 bg-gray-200 rounded w-4/6 animate-pulse" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+### Error Handling
+
+**Error Boundaries with error.tsx:**
+
+```typescript
+// app/posts/error.tsx
+'use client';
+
+import { useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+
+export default function PostsError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  useEffect(() => {
+    console.error('Posts page error:', error);
+  }, [error]);
+
+  return (
+    <div className="container mx-auto px-4 py-8 text-center">
+      <h2 className="text-2xl font-bold mb-4">Something went wrong!</h2>
+      <p className="text-gray-600 mb-6">
+        We couldn't load the posts. Please try again later.
+      </p>
+      <Button onClick={reset}>Try again</Button>
+    </div>
+  );
+}
+```
+
+## Performance & Optimization
+
+**Dynamic Imports for Client Components:**
+
+```typescript
+// app/posts/[slug]/page.tsx
+import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
+
+// Dynamically import heavy client components
+const CommentSection = dynamic(
+  () => import('@/components/CommentSection').then(mod => ({ default: mod.CommentSection })),
+  {
+    loading: () => <div className="h-32 bg-gray-100 rounded-lg animate-pulse" />,
+    ssr: false, // Only load on client
+  }
+);
+
+const InteractiveChart = dynamic(
+  () => import('@/components/InteractiveChart'),
+  {
+    loading: () => <div className="h-64 bg-gray-100 rounded-lg animate-pulse" />,
+  }
+);
+
+export default async function PostPage({ params }: PostPageProps) {
+  const post = await getPost(params.slug);
+
+  return (
+    <article>
+      {/* Server-rendered content */}
+      <PostContent post={post} />
+
+      {/* Client components loaded on demand */}
+      <Suspense fallback={<div>Loading comments...</div>}>
+        <CommentSection postId={post.id} />
+      </Suspense>
+
+      <Suspense fallback={<div>Loading chart...</div>}>
+        <InteractiveChart data={post.analytics} />
+      </Suspense>
+    </article>
+  );
+}
+```
+
+## Common Questions
+
+**Q: When should I use server vs client components?**
+Use server components for static content, data fetching, and non-interactive UI. Use client components for interactivity, event handlers, browser APIs, and React hooks.
+
+**Q: Can server components access environment variables?**
+Yes, server components can access server-side environment variables directly, but client components need variables prefixed with NEXT*PUBLIC*.
+
+**Q: How do I share state between server and client components?**
+State cannot be shared directly. Pass data from server to client as props, use URL search params for simple state, or implement client-side state management.
+
+## Tools & Resources
+
+- **Next.js App Router Documentation** - Official RSC documentation
+- **React Server Components RFC** - Technical specification
+- **Next.js DevTools** - Debug RSC rendering and performance
+- **Bundle Analyzer** - Monitor client-side JavaScript size
+
+## Related Topics
+
+- [React Performance Optimization](/topics/react-performance-optimization)
+- [React Hooks State Management](/topics/react-hooks-state-management)
+
+## Need Help With Implementation?
+
+Implementing React Server Components requires understanding the new paradigm, migration strategies, and performance implications. Built By Dakic specializes in Next.js development and RSC implementation, helping teams leverage server components for better performance and developer experience. Get in touch for a free consultation and discover how we can help you migrate to and optimize React Server Components.

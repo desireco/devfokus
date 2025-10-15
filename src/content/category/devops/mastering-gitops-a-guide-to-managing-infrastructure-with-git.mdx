@@ -1,0 +1,73 @@
+---
+title: 'Mastering GitOps: A Guide to Managing Infrastructure with Git'
+description: 'An in-depth guide to GitOps, an operational framework that uses Git as the single source of truth for declarative infrastructure and application deployment.'
+publishDate: '2025-10-14'
+category: 'devops'
+difficulty: 'advanced'
+targetAudience: ['DevOps Engineers', 'Platform Engineers', 'SREs']
+estimatedReadingTime: 11
+tags: ['gitops', 'devops', 'kubernetes', 'ci/cd', 'argo cd']
+featured: true
+relatedTopics: ['infrastructure-as-code-principles-and-practices', 'an-introduction-to-kubernetes']
+relatedServices: ['gitops-consulting', 'kubernetes-management']
+meta:
+  metaTitle: 'What is GitOps? A Guide to Managing Infrastructure with Git'
+  metaDescription: 'Learn how to use GitOps to manage your Kubernetes clusters and applications. This guide explains the core principles of GitOps and introduces tools like Argo CD and Flux.'
+  keywords: ['gitops', 'what is gitops', 'declarative infrastructure', 'argo cd', 'flux']
+---
+
+# Mastering GitOps: A Guide to Managing Infrastructure with Git
+
+## Quick Summary (TL;DR)
+
+GitOps is a modern, declarative approach to managing infrastructure and applications where a Git repository is the **single source of truth**. The desired state of the entire system is described in a Git repo. An automated agent, running in the cluster, continuously compares the live state of the system with the state defined in the repo. If there is a difference (a "drift"), the agent automatically updates the live state to match the repo, ensuring the system is always in its desired configuration.
+
+## Key Takeaways
+
+- **Git is the Source of Truth**: In a GitOps workflow, no one makes manual changes to the live cluster (e.g., with `kubectl`). All changes, whether to application code or infrastructure, are made via a pull request to a Git repository. This provides a complete, auditable history of every change.
+- **The System is Declarative**: The Git repository contains a declarative description of the entire system, typically in the form of YAML files for Kubernetes resources or Terraform for infrastructure.
+- **An Agent Enforces the State**: A software agent (like Argo CD or Flux) runs within the Kubernetes cluster. Its job is to constantly monitor the Git repo and the live cluster state, and automatically synchronize them if they diverge.
+
+## The Solution
+
+Traditional CI/CD pipelines, often called "push-based" pipelines, work by running scripts that push changes to a cluster. This requires the CI system to have powerful credentials to the cluster, which can be a security risk. GitOps introduces a "pull-based" model. The CI pipeline's only job is to update the configuration in a Git repository. A separate agent inside the cluster then pulls those changes and applies them. This is more secure because the cluster credentials never leave the cluster's boundary. It also makes the system more reliable by continuously enforcing the correct state and preventing manual configuration drift.
+
+## Implementation Steps
+
+1.  **Structure Your Git Repositories**
+    A common pattern is to have two repositories: an **application repository** containing the application source code, and a **configuration repository** containing the declarative deployment manifests (e.g., Kubernetes YAML) for your environments (dev, staging, prod).
+
+2.  **Set Up Your CI Pipeline**
+    Configure your CI pipeline (e.g., GitHub Actions) to run on the application repository. When tests pass, the pipeline should build a new container image, push it to a registry, and then automatically update the image tag in the Kubernetes manifest in your _configuration repository_.
+
+3.  **Install a GitOps Agent in Your Cluster**
+    Choose and install a GitOps agent in your Kubernetes cluster. Argo CD is a very popular choice with a great user interface. Flux is another excellent, widely-used option.
+
+4.  **Configure the Agent to Watch Your Repo**
+    Point your GitOps agent to the configuration repository. The agent will immediately pull the manifests and apply them to the cluster, deploying your application. From now on, it will continuously monitor the repository for any new commits and automatically apply the changes.
+
+## Common Questions
+
+**Q: What is the difference between GitOps and Infrastructure as Code (IaC)?**
+IaC is the practice of defining infrastructure in code. GitOps is a specific _workflow_ for implementing IaC, particularly for Kubernetes. GitOps builds on IaC by adding the concepts of using Git as the single source of truth and using an automated agent to enforce that truth.
+
+**Q: How do I handle secrets with GitOps?**
+You should never store plain-text secrets in a Git repository. The best practice is to use a tool like Sealed Secrets or HashiCorp Vault. You store encrypted secrets in your Git repo, and a controller inside the cluster decrypts them before applying them.
+
+**Q: How do I roll back a change?**
+Rolling back is as simple as reverting the change in Git. Because Git is the source of truth, when you `git revert` a commit, the GitOps agent will see the change in the repository and automatically revert the live state of the cluster to match the previous state.
+
+## Tools & Resources
+
+- **Argo CD**: A declarative, GitOps continuous delivery tool for Kubernetes. It is one of the most popular GitOps agents and is known for its powerful features and intuitive web UI.
+- **Flux**: A GitOps tool that is part of the CNCF (Cloud Native Computing Foundation) and provides a set of continuous and progressive delivery solutions for Kubernetes.
+- **Sealed Secrets**: A Kubernetes controller and tool for one-way encrypted secrets. It allows you to store secrets safely in a public Git repository.
+
+## Related Topics
+
+- [Infrastructure as Code (IaC): A Guide to Principles and Practices](/category/devops/infrastructure-as-code-principles-and-practices)
+- [An Introduction to Kubernetes: Orchestrating Containers at Scale](/category/devops/an-introduction-to-kubernetes)
+
+## Need Help With Implementation?
+
+Adopting a GitOps workflow can revolutionize your deployment process, making it more secure, reliable, and transparent. Built By Dakic provides expert consulting on Kubernetes and GitOps to help you implement a modern, declarative continuous delivery platform. Get in touch for a free consultation.

@@ -1,0 +1,279 @@
+---
+title: 'Quick start guide to React with TypeScript'
+description: 'Get started with React and TypeScript in minutes. Learn setup, basic concepts, and best practices for type-safe React development.'
+
+publishDate: '2025-10-14'
+
+category: 'react'
+
+difficulty: 'beginner'
+
+targetAudience: ['react-beginners', 'typescript-learners', 'frontend-developers']
+
+estimatedReadingTime: 7
+
+tags: ['react-typescript', 'typescript', 'react-setup', 'type-safety']
+
+featured: true
+
+relatedTopics: ['react-hooks-state-management', 'react-component-challenges']
+relatedServices: ['react-development']
+
+meta:
+  metaTitle: 'React TypeScript Quick Start Guide | Setup Tutorial 2025'
+  metaDescription: 'Learn how to set up React with TypeScript quickly. Complete guide with setup instructions, basic concepts, and best practices.'
+  keywords: ['react typescript', 'react setup', 'typescript tutorial', 'type safety']
+---
+
+# Quick start guide to React with TypeScript
+
+## What is React with TypeScript?
+
+React with TypeScript combines React's component-based UI library with TypeScript's static typing, giving you the best of both worlds: React's declarative UI approach and TypeScript's type safety, better IDE support, and catch-errors-before-runtime capabilities. This combination helps you build more reliable, maintainable React applications with fewer runtime errors.
+
+## Why Should You Care?
+
+TypeScript adds type safety to React, preventing common bugs like undefined props, wrong data types, and misspelled property names. It provides excellent autocompletion in your code editor, makes refactoring safer, and serves as documentation for your components. Teams using TypeScript report fewer bugs and faster development once they're comfortable with the basics.
+
+## Before You Start
+
+### Prerequisites
+
+- Basic JavaScript knowledge
+- Understanding of React fundamentals (components, props, state)
+- Familiarity with modern JavaScript (ES6+ features)
+
+### What You'll Need
+
+- Node.js (version 16 or higher)
+- npm or yarn package manager
+- Code editor with TypeScript support (VS Code recommended)
+
+## Step-by-Step Tutorial
+
+### Step 1: Set up your React TypeScript project
+
+The easiest way to start is with Create React App's TypeScript template:
+
+```bash
+npx create-react-app my-react-typescript-app --template typescript
+cd my-react-typescript-app
+npm start
+```
+
+This creates a complete React project with TypeScript configuration, including:
+
+- `tsconfig.json` - TypeScript compiler configuration
+- Type definitions for React and common libraries
+- Example components with TypeScript
+
+### Step 2: Understand basic TypeScript types in React
+
+**Typing Props:**
+
+```typescript
+// Define the type for your component props
+interface GreetingProps {
+  name: string;
+  age?: number; // Optional prop
+  isStudent?: boolean; // Optional prop with default
+}
+
+const Greeting: React.FC<GreetingProps> = ({
+  name,
+  age,
+  isStudent = false
+}) => {
+  return (
+    <div>
+      <h1>Hello, {name}!</h1>
+      {age && <p>Age: {age}</p>}
+      {isStudent && <p>Student Status: Active</p>}
+    </div>
+  );
+};
+
+// Usage
+<Greeting name="Alice" age={25} />
+<Greeting name="Bob" isStudent />
+```
+
+**Typing State:**
+
+```typescript
+import { useState } from 'react';
+
+const Counter: React.FC = () => {
+  const [count, setCount] = useState<number>(0);
+  const [message, setMessage] = useState<string>('');
+
+  const increment = () => {
+    setCount(prevCount => prevCount + 1);
+  };
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={increment}>Increment</button>
+      <input
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        placeholder="Type a message"
+      />
+    </div>
+  );
+};
+```
+
+### Step 3: Work with events and forms
+
+**Event Handling:**
+
+```typescript
+interface FormProps {
+  onSubmit: (data: { email: string; password: string }) => void;
+}
+
+const LoginForm: React.FC<FormProps> = ({ onSubmit }) => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    onSubmit({ email, password });
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="email"
+        value={email}
+        onChange={handleEmailChange}
+        placeholder="Email"
+        required
+      />
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
+        required
+      />
+      <button type="submit">Login</button>
+    </form>
+  );
+};
+```
+
+**Working with Arrays:**
+
+```typescript
+interface Todo {
+  id: number;
+  text: string;
+  completed: boolean;
+}
+
+const TodoList: React.FC = () => {
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [inputValue, setInputValue] = useState<string>('');
+
+  const addTodo = () => {
+    if (inputValue.trim()) {
+      const newTodo: Todo = {
+        id: Date.now(),
+        text: inputValue,
+        completed: false
+      };
+      setTodos([...todos, newTodo]);
+      setInputValue('');
+    }
+  };
+
+  const toggleTodo = (id: number) => {
+    setTodos(todos.map(todo =>
+      todo.id === id
+        ? { ...todo, completed: !todo.completed }
+        : todo
+    ));
+  };
+
+  return (
+    <div>
+      <input
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        placeholder="Add a todo"
+      />
+      <button onClick={addTodo}>Add</button>
+      <ul>
+        {todos.map(todo => (
+          <li
+            key={todo.id}
+            onClick={() => toggleTodo(todo.id)}
+            style={{
+              textDecoration: todo.completed ? 'line-through' : 'none'
+            }}
+          >
+            {todo.text}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+```
+
+## What's Next?
+
+**Advanced TypeScript Concepts:**
+
+- Generics for reusable components
+- Union types for handling different data shapes
+- Type guards for runtime type checking
+- Utility types (Partial, Pick, Omit)
+
+**React Patterns with TypeScript:**
+
+- Custom hooks with proper typing
+- Context API with TypeScript
+- Higher-order components
+- Render props patterns
+
+**Best Practices:**
+
+- Use strict TypeScript configuration
+- Prefer interfaces over types for object shapes
+- Use React.FC for functional components
+- Always type your props and state
+
+## Common Questions
+
+**Q: Should I use interfaces or types for my props?**
+Use interfaces for object shapes that might be extended, and types for unions, intersections, or more complex type manipulations. For component props, interfaces are generally preferred.
+
+**Q: Do I need to type everything?**
+TypeScript can infer many types automatically. Focus on typing component props, state, function parameters, and API responses. Let TypeScript infer the rest.
+
+**Q: How do I handle external libraries without types?**
+Use `@types/` packages when available, or create declaration files (`.d.ts`) for untyped libraries. You can also use `any` as a last resort.
+
+## Tools & Resources
+
+- **TypeScript Handbook** - Official TypeScript documentation
+- **React TypeScript Cheatsheet** - Community-maintained patterns and examples
+- **TypeScript Playground** - Online TypeScript editor for experimentation
+- **VS Code** - Best IDE for TypeScript development with excellent IntelliSense
+
+## Related Topics
+
+- [React Hooks State Management](/topics/react-hooks-state-management)
+- [Solving React Component Challenges](/topics/react-component-challenges)
+
+## Need Help With Implementation?
+
+Getting started with React and TypeScript is straightforward, but building production applications requires understanding advanced patterns, performance optimization, and best practices. Built By Dakic specializes in helping teams adopt TypeScript in React projects, ensuring type safety while maintaining development velocity. Get in touch for a free consultation and discover how we can help you build robust, type-safe React applications.

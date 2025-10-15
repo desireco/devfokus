@@ -1,0 +1,79 @@
+---
+title: 'Content Security Policy (CSP): A Defense Against XSS and Injection Attacks'
+description: 'A guide to implementing a Content Security Policy (CSP) as a powerful, in-depth defense to prevent Cross-Site Scripting (XSS) and other injection attacks.'
+publishDate: '2025-10-14'
+category: 'security-best-practices'
+difficulty: 'advanced'
+targetAudience: ['Web Developers', 'Security Engineers', 'Frontend Developers']
+estimatedReadingTime: 10
+tags: ['csp', 'content security policy', 'xss', 'web security']
+featured: false
+relatedTopics:
+  [
+    'understanding-cross-site-scripting-xss-a-guide-to-prevention',
+    'security-headers-for-web-applications-a-practical-guide',
+  ]
+relatedServices: ['application-security-audits', 'frontend-security-consulting']
+meta:
+  metaTitle: 'What is a Content Security Policy (CSP)? A Security Guide'
+  metaDescription: 'Learn how to use a Content Security Policy (CSP) to mitigate XSS and data injection attacks. This guide covers how to build and deploy a CSP header.'
+  keywords: ['content security policy', 'csp', 'xss prevention', 'web security']
+---
+
+# Content Security Policy (CSP): A Defense Against XSS and Injection Attacks
+
+## Quick Summary (TL;DR)
+
+A Content Security Policy (CSP) is a web security standard that provides an added layer of defense against Cross-Site Scripting (XSS), clickjacking, and other data injection attacks. It is delivered as an HTTP response header (`Content-Security-Policy`) from your web server. The header's value is a string of directives that tells the browser which dynamic resources (like scripts, stylesheets, and images) are allowed to be loaded on your web page. A well-configured CSP can effectively block browsers from executing malicious scripts injected by an attacker.
+
+## Key Takeaways
+
+- **It's a Whitelist for Your Website**: A CSP allows you to define a whitelist of trusted sources. For example, you can specify that scripts are only allowed to be loaded from your own domain and a trusted third-party domain (like a CDN). The browser will then block scripts from any other source.
+- **Defense-in-Depth for XSS**: CSP is not a replacement for proper output encoding, but it is a powerful second line of defense. Even if an attacker finds an XSS vulnerability, a strict CSP can prevent the malicious script from executing.
+- **Disabling Inline Scripts is the Goal**: One of the most powerful features of a CSP is the ability to disable inline scripts (`<script>alert(1)</script>`) and `eval()`. This forces you to adopt safer coding practices by moving all JavaScript into separate `.js` files.
+
+## The Solution
+
+Even with careful coding, XSS vulnerabilities can be introduced into a complex web application. A Content Security Policy provides a crucial safety net. By explicitly telling the browser where it is allowed to load content from, you can severely limit the capabilities of an attacker. If an attacker manages to inject a malicious script tag that points to their own evil domain, the browser will consult the CSP, see that the evil domain is not on the whitelist, and refuse to load or execute the script. This makes many common XSS attacks completely ineffective.
+
+## Implementation Steps
+
+1.  **Start with a Report-Only Policy**
+    Implementing a strict CSP can break your site if not done carefully. Always start by deploying your policy in report-only mode (`Content-Security-Policy-Report-Only` header). In this mode, the browser will not block anything, but it will send a JSON report to a specified URL every time a violation occurs. This allows you to see what would have been blocked without affecting your users.
+
+2.  **Build Your Policy Incrementally**
+    Start with a restrictive policy, such as `default-src 'self'`, which allows content only from your own domain. Then, use the violation reports from your report-only policy to identify the other legitimate domains you need to whitelist (e.g., for fonts, analytics, or CDNs) and add them to the appropriate directives (`script-src`, `style-src`, etc.).
+
+3.  **Eliminate Inline Scripts and `eval()`**
+    The biggest challenge is often refactoring your frontend code to remove all inline scripts and uses of `eval()`. All JavaScript code should be in external `.js` files loaded via `<script src=...></script>`. This allows you to create a much more secure policy that does not include the unsafe `'unsafe-inline'` or `'unsafe-eval'` keywords.
+
+4.  **Enforce the Policy**
+    Once you are confident that your policy is correct and you are no longer seeing violation reports for legitimate content, you can switch from the `Content-Security-Policy-Report-Only` header to the enforcing `Content-Security-Policy` header.
+
+## Common Questions
+
+**Q: What does a simple CSP header look like?**
+A basic but effective policy might look like this:
+`Content-Security-Policy: default-src 'self'; script-src 'self' https://trusted-cdn.com; object-src 'none';`
+This policy allows content from your own domain by default, allows scripts from your own domain and `trusted-cdn.com`, and completely disallows plugins like Flash (`object-src 'none'`).
+
+**Q: How do I handle dynamically added scripts?**
+If you must use inline scripts, you can use a nonce-based or hash-based approach. A **nonce** is a unique, random string that you generate on the server for each request, include in your CSP header, and add as an attribute to your script tag. The browser will only execute script tags that have the correct nonce.
+
+**Q: Is CSP difficult to implement?**
+It can be, especially for large, legacy applications with a lot of inline scripts. The key is to start with a report-only policy and iterate. For new applications, designing with CSP in mind from the beginning is much easier.
+
+## Tools & Resources
+
+- **MDN Content Security Policy Docs**: The definitive reference for all CSP directives and features from the Mozilla Developer Network.
+- **CSP Evaluator from Google**: A tool that helps you check a CSP to see if it is well-formed and identify potential weaknesses.
+- **Report-URI**: A service that can receive and analyze the violation reports generated by your CSP, making it easier to debug and build your policy.
+
+## Related Topics
+
+- [Understanding Cross-Site Scripting (XSS): A Guide to Prevention](/category/security-best-practices/understanding-cross-site-scripting-xss-a-guide-to-prevention)
+- [Security Headers for Web Applications: A Practical Guide](/category/security-best-practices/security-headers-for-web-applications-a-practical-guide)
+
+## Need Help With Implementation?
+
+Crafting and deploying an effective Content Security Policy can be a challenging process that requires careful analysis and testing. Built By Dakic provides expert application security consulting to help you design and implement a robust CSP that significantly enhances your website's defense against injection attacks. Get in touch for a free consultation.
