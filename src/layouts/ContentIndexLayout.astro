@@ -22,6 +22,8 @@ const { collectionType, title, description, defaultLimit } = Astro.props;
 const page = Number(Astro.url.searchParams.get("page")) || 1;
 const limit = Number(Astro.url.searchParams.get("limit")) || defaultLimit;
 const tag = Astro.url.searchParams.get("tag");
+const featured = Astro.url.searchParams.get("featured");
+const targetAudience = Astro.url.searchParams.get("targetAudience");
 
 const sourceItems = await getCollection(collectionType);
 
@@ -29,6 +31,18 @@ const tags = sourceItems.flatMap((item) => item.data.tags || []);
 const tagCounts = tags.reduce(
     (acc, currentTag) => {
         acc[currentTag] = (acc[currentTag] || 0) + 1;
+        return acc;
+    },
+    {} as Record<string, number>,
+);
+
+// Extract target audience data for categories
+const targetAudiences = collectionType === "categories" 
+    ? sourceItems.flatMap((item) => item.data.targetAudience || [])
+    : [];
+const targetAudienceCounts = targetAudiences.reduce(
+    (acc, currentAudience) => {
+        acc[currentAudience] = (acc[currentAudience] || 0) + 1;
         return acc;
     },
     {} as Record<string, number>,
@@ -51,11 +65,48 @@ const tagList = Object.entries(tagCounts)
         ),
     }));
 
+const targetAudienceList = Object.entries(targetAudienceCounts)
+    .sort(([, a], [, b]) => (b as number) - (a as number))
+    .map(([audience, count]) => ({
+        tag: audience,
+        count: count as number,
+        size: Math.max(
+            1,
+            Math.min(
+                4,
+                Math.ceil(
+                    ((count as number) * 4) /
+                        Math.max(...(Object.values(targetAudienceCounts) as number[])),
+                ),
+            ),
+        ),
+    }));
+
 let allItems: typeof sourceItems;
-if (tag) {
-    allItems = sourceItems.filter((item) => item.data.tags?.includes(tag));
-} else {
-    allItems = sourceItems;
+
+// Apply filters
+allItems = sourceItems.filter((item) => {
+    // Tag filter
+    if (tag && !item.data.tags?.includes(tag)) {
+        return false;
+    }
+    
+    // Featured filter for categories
+    if (collectionType === "categories" && featured === "true" && !item.data.featured) {
+        return false;
+    }
+    
+    // Target audience filter for categories
+    if (collectionType === "categories" && targetAudience && !item.data.targetAudience?.includes(targetAudience)) {
+        return false;
+    }
+    
+    return true;
+});
+
+// Default to featured categories if no filters are applied and it's the categories page
+if (collectionType === "categories" && !tag && !featured && !targetAudience) {
+    allItems = sourceItems.filter((item) => item.data.featured);
 }
 
 const sortedItems = allItems.sort((a, b) => {
@@ -142,7 +193,10 @@ const items = paginatedItems.items.map((item) => {
             <CategoriesPage
                 categories={items}
                 allTags={tagList}
+                targetAudienceList={targetAudienceList}
                 tag={tag || ""}
+                featured={featured || ""}
+                targetAudience={targetAudience || ""}
             />
         )
     }
@@ -152,7 +206,7 @@ const items = paginatedItems.items.map((item) => {
             {
                 page > 1 && (
                     <a
-                        href={`/${collectionType}?page=${page - 1}&limit=${limit}${tag ? `&tag=${tag}` : ""}`}
+                        href={`/${collectionType}?page=${page - 1}&limit=${limit}${tag ? `&tag=${tag}` : ""}${featured ? `&featured=${featured}` : ""}${targetAudience ? `&targetAudience=${targetAudience}` : ""}`}
                         class="inline-flex items-center px-4 py-2 text-sm font-medium border rounded-md transition-colors border-slate-400 text-slate-400 hover:text-emerald-400"
                     >
                         <svg
@@ -178,7 +232,7 @@ const items = paginatedItems.items.map((item) => {
             {
                 paginatedItems.hasMore && (
                     <a
-                        href={`/${collectionType}?page=${page + 1}&limit=${limit}${tag ? `&tag=${tag}` : ""}`}
+                        href={`/${collectionType}?page=${page + 1}&limit=${limit}${tag ? `&tag=${tag}` : ""}${featured ? `&featured=${featured}` : ""}${targetAudience ? `&targetAudience=${targetAudience}` : ""}`}
                         class="inline-flex items-center px-4 py-2 text-sm font-medium border rounded-md border-slate-400 text-slate-400 hover:text-emerald-400 transition-colors"
                     >
                         Next

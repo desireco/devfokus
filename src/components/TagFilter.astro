@@ -8,8 +8,11 @@ export interface Tag {
 interface Props {
   tags: Tag[];
   currentTag?: string | null;
-  type?: "blogs" | "cards" | "slides";
+  type?: "blogs" | "cards" | "slides" | "categories";
   usedFor?: "list" | "detail";
+  targetAudienceList?: Tag[];
+  featured?: string | null;
+  targetAudience?: string | null;
 }
 
 const {
@@ -17,6 +20,9 @@ const {
   currentTag: tag,
   type = "blogs",
   usedFor = "list",
+  targetAudienceList = [],
+  featured,
+  targetAudience,
 } = Astro.props;
 
 const selectedTags = tag ? [tag] : [];
@@ -25,16 +31,32 @@ const selectedTags = tag ? [tag] : [];
 <div class="flex flex-wrap gap-2 w-fit" data-tag-filter>
   {
     usedFor === "list" && (
-      <a
-        href={`/${type}`}
-        class={`inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-8 !px-3 ${
-          selectedTags.length === 0
-            ? "text-primary border border-primary hover:text-primary hover:border-primary"
-            : "border border-slate-400 text-slate-400 hover:!text-primary hover:!border-primary"
-        }`}
-      >
-        All
-      </a>
+      <>
+        {type === "categories" && (
+          <a
+            href={`/${type}?`}
+            class={`inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-8 !px-3 ${
+              !featured && !tag && !targetAudience
+                ? "text-primary border border-primary hover:text-primary hover:border-primary bg-black"
+                : "border border-slate-400 text-slate-400 hover:!text-primary hover:!border-primary bg-black"
+            }`}
+          >
+            All
+          </a>
+        )}
+        {type !== "categories" && (
+          <a
+            href={`/${type}`}
+            class={`inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-8 !px-3 ${
+              selectedTags.length === 0
+                ? "text-primary border border-primary hover:text-primary hover:border-primary"
+                : "border border-slate-400 text-slate-400 hover:!text-primary hover:!border-primary"
+            }`}
+          >
+            All
+          </a>
+        )}
+      </>
     )
   }
   {
@@ -51,6 +73,27 @@ const selectedTags = tag ? [tag] : [];
         {tagItem.count && `(${tagItem.count})`}
       </a>
     ))
+  }
+  {
+    type === "categories" && targetAudienceList.length > 0 && (
+      <>
+        <div class="w-full h-px bg-slate-600 my-2"></div>
+        <div class="w-full text-xs text-slate-400 mb-2">Target Audience:</div>
+        {targetAudienceList.map((audienceItem) => (
+          <a
+            href={`/${type}?targetAudience=${encodeURIComponent(audienceItem.tag)}`}
+            class={`inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-8 !px-3 !no-underline ${
+              targetAudience === audienceItem.tag
+                ? "text-amber-400 border border-amber-400 hover:text-amber-400 hover:border-amber-400 bg-black"
+                : "border border-slate-400 text-slate-400 hover:!text-amber-400 hover:!border-amber-400 bg-black"
+            }`}
+          >
+            {audienceItem.tag}
+            {audienceItem.count && `(${audienceItem.count})`}
+          </a>
+        ))}
+      </>
+    )
   }
 </div>
 

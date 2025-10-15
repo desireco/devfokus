@@ -11,10 +11,13 @@ interface Tag {
 interface Props {
   categories: Category[];
   allTags: Tag[];
+  targetAudienceList: Tag[];
   tag?: string | null;
+  featured?: string | null;
+  targetAudience?: string | null;
 }
 
-const { categories, allTags, tag } = Astro.props;
+const { categories, allTags, targetAudienceList, tag, featured, targetAudience } = Astro.props;
 
 // Sort categories: featured first, then by order, then alphabetically
 const sortedCategories = categories.sort((a, b) => {
@@ -38,10 +41,17 @@ const regularCategories = sortedCategories.filter(cat => !cat.featured);
 ---
 
 <div>
-  <TagFilter tags={allTags} currentTag={tag} type="categories" />
+  <TagFilter 
+    tags={allTags} 
+    targetAudienceList={targetAudienceList}
+    currentTag={tag} 
+    featured={featured}
+    targetAudience={targetAudience}
+    type="categories" 
+  />
 
   <!-- Featured Categories Section -->
-  {tag === null && featuredCategories.length > 0 && (
+  {!tag && !targetAudience && (featured === "true" || (!featured && !tag && !targetAudience)) && featuredCategories.length > 0 && (
     <section class="mb-12">
       <h2 class="text-3xl font-bold text-slate-300 mb-6 text-center">Featured Categories</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -60,23 +70,29 @@ const regularCategories = sortedCategories.filter(cat => !cat.featured);
       </h2>
     )}
 
-    {tag === null && regularCategories.length > 0 && featuredCategories.length > 0 && (
+    {targetAudience && (
+      <h2 class="text-2xl font-semibold text-slate-300 mb-6 text-center">
+        Categories for "{targetAudience}"
+      </h2>
+    )}
+
+    {!tag && !targetAudience && !featured && regularCategories.length > 0 && featuredCategories.length > 0 && (
       <h2 class="text-2xl font-semibold text-slate-300 mb-6 text-center">All Categories</h2>
     )}
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {sortedCategories
-        .filter(category => tag === null || !tag || category.slug.includes(tag) || category.title.toLowerCase().includes(tag.toLowerCase()))
-        .map((category) => (
+    {(tag || targetAudience || (!featured && !tag && !targetAudience)) && (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {sortedCategories.map((category) => (
           <CategoryCard category={category} />
         ))}
-    </div>
+      </div>
+    )}
   </section>
 
   {categories.length === 0 && (
     <div class="text-center py-12">
       <div class="text-gray-500 text-lg mb-4">No categories found</div>
-      {tag && (
+      {(tag || targetAudience || featured) && (
         <a href="/categories" class="inline-block text-emerald-400 hover:text-emerald-300">
           Clear filter and view all categories
         </a>
@@ -85,7 +101,7 @@ const regularCategories = sortedCategories.filter(cat => !cat.featured);
   )}
 
   <!-- Category Overview Stats -->
-  {tag === null && categories.length > 0 && (
+  {!tag && !targetAudience && !featured && categories.length > 0 && (
     <section class="mt-12 text-center">
       <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
