@@ -66,7 +66,7 @@ function formatIcon(icon: string) {
   }
   
   // Wrap path data with SVG element
-  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${icon}"/></svg>`;
+  return `<svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full"><path d="${icon}"/></svg>`;
 }
 
 const hasRelatedCategories = relatedCategories && relatedCategories.length > 0;
