@@ -7,6 +7,7 @@
 
 [build.environment]
   NODE_VERSION = "22"
+  SITE_URL = "https://www.devfokus.com"
 
 # Headers for caching static assets
 [[headers]]

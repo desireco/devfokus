@@ -78,10 +78,7 @@ export default defineConfig({
             if (id.includes("animejs")) {
               return "animation";
             }
-            // Split image processing
-            if (id.includes("@vercel/og")) {
-              return "image";
-            }
+
           },
         },
       },

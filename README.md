@@ -11,7 +11,7 @@ devFokus developer portal - An Astro site featuring multi-format content includi
 
 ## Tech Stack
 
-- Astro 5 with SSR (Vercel deployment)
+- Astro 5 with SSR (Netlify deployment)
 - React 19 with Radix UI and Lucide icons
 - TailwindCSS 4
 - Pagefind for static search indexing
