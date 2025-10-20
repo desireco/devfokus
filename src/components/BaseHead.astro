@@ -79,6 +79,14 @@ const websiteStructuredData =
         name: title,
         description: description,
         url: Astro.url.toString(),
+        publisher: {
+          "@type": "Organization",
+          name: SITE_TITLE,
+          logo: {
+            "@type": "ImageObject",
+            url: new URL("/dflogo.svg", Astro.site).toString(),
+          },
+        },
         potentialAction: {
           "@type": "SearchAction",
           target: {
@@ -90,6 +98,8 @@ const websiteStructuredData =
           },
           "query-input": "required name=search_term_string",
         },
+        about: "Developer portal for modern web development, mobile apps, DevOps, and software engineering",
+        keywords: "web development, mobile development, DevOps, software engineering, React, TypeScript, Node.js, Docker, tutorials, guides",
       }
     : null;
 
@@ -116,13 +126,45 @@ const productStructuredData =
         },
       }
     : null;
+
+const organizationStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: SITE_TITLE,
+  description: "Comprehensive developer portal with in-depth tutorials, guides, and resources for modern software development",
+  url: new URL("/", Astro.site).toString(),
+  logo: {
+    "@type": "ImageObject",
+    url: new URL("/dflogo.svg", Astro.site).toString(),
+  },
+  sameAs: [],
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "educational support",
+  },
+  knowsAbout: [
+    "Web Development",
+    "Mobile Development", 
+    "DevOps",
+    "Software Architecture",
+    "React",
+    "TypeScript",
+    "Node.js",
+    "Docker",
+    "JavaScript",
+    "Python",
+    "Cloud Computing"
+  ]
+};
 ---
 
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="robots" content={robots} />
-<link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="apple-touch-icon" href="/favicon.svg" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link
   rel="alternate"
@@ -162,6 +204,12 @@ const productStructuredData =
 <title>{title}</title>
 <meta name="title" content={title} />
 <meta name="description" content={description} />
+<meta name="theme-color" content="#000000" />
+<meta name="msapplication-TileColor" content="#000000" />
+<meta name="application-name" content={SITE_TITLE} />
+<meta name="apple-mobile-web-app-title" content={SITE_TITLE} />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content={type} />
@@ -172,7 +220,7 @@ const productStructuredData =
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:image:alt" content={title} />
-<meta property="og:image:type" content="image/png" />
+<meta property="og:image:type" content="image/webp" />
 {
   type === "article" && publishedTime && (
     <meta property="article:published_time" content={publishedTime} />
@@ -204,9 +252,11 @@ const productStructuredData =
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={absoluteImageUrl} />
-<meta name="twitter:image:alt" content={title} />
+<meta name="twitter:image:alt" content={`${title} - devFokus Developer Portal`} />
 <meta name="twitter:image:width" content="1200" />
 <meta name="twitter:image:height" content="630" />
+<meta name="twitter:site" content="@devfokus" />
+<meta name="twitter:creator" content="@devfokus" />
 
 <!-- Structured Data -->
 {
@@ -235,6 +285,16 @@ const productStructuredData =
       type="application/ld+json"
       is:inline
       set:html={JSON.stringify(productStructuredData)}
+    />
+  )
+}
+
+{
+  type === "website" && (
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(organizationStructuredData)}
     />
   )
 }
