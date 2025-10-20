@@ -8,7 +8,7 @@ targetAudience: ['System Architects', 'Backend Engineers', 'Data Engineers']
 estimatedReadingTime: 11
 tags: ['microservices', 'data management', 'database-per-service', 'distributed data']
 featured: true
-relatedTopics: ['an-introduction-to-microservices-architecture', 'microservices-communication-patterns']
+relatedTopics: ['an-introduction-to-microservices-architecture', 'decomposing-a-monolith-into-microservices', 'microservices-communication-patterns', 'distributed-database-consistency-patterns', 'cqrs-command-query-responsibility-segregation', 'event-sourcing-database-patterns', 'database-scaling-patterns-read-replicas-connection-pooling-and-caching', 'nosql-vs-sql-database-selection-strategy', 'polyglot-persistence-patterns', 'api-composition-patterns']
 relatedServices: ['microservices-consulting', 'database-architecture-design']
 meta:
   metaTitle: 'Data Management in Microservices: The Database-per-Service Pattern'
@@ -20,7 +20,7 @@ meta:
 
 ## Quick Summary (TL;DR)
 
-The **database-per-service** pattern is a core principle of microservices architecture. It dictates that each microservice should own and manage its own private database. Other services are not allowed to access this database directly; they must interact with the data only through the owning service's public API. This pattern ensures loose coupling between services, allowing them to be developed, deployed, and scaled independently. However, it introduces the significant challenge of how to query data that is spread across multiple databases.
+The **database-per-service** pattern ...a core principle of [microservices architecture](/microservices/an-introduction-to-microservices-architecture). It dictates that each microservice should own and manage its own private database. Other services are not allowed to access this database directly; they must interact with the data only through the owning service's public API. This pattern ensures loose coupling between services, allowing them to be developed, deployed, and scaled independently. However, it introduces the significant challenge of how to query data that is spread across multiple databases.
 
 ## Key Takeaways
 
@@ -30,7 +30,7 @@ The **database-per-service** pattern is a core principle of microservices archit
 
 ## The Solution: From Shared Database to Database-per-Service
 
-In a monolithic application, it's common for all code to share a single, large database. This creates tight coupling; a change to the database schema for one feature can have unintended consequences for another. The database-per-service pattern solves this by decentralizing data ownership. Each microservice becomes the single source of truth for a specific business domain. This aligns with the core microservice principle of autonomy and enables true independent deployment.
+In a [monolithic application](/microservices/decomposing-a-monolith-into-microservices), it's common... for all code to share a single, large database. This creates tight coupling; a change to the database schema for one feature can have unintended consequences for another. The database-per-service pattern solves this by decentralizing data ownership. Each microservice becomes the single source of truth for a specific business domain. This aligns with the core microservice principle of autonomy and enables true independent deployment.
 
 ## Strategies for Querying Data Across Services
 
@@ -38,7 +38,7 @@ Since you can't use distributed transactions or direct joins, you need to use ot
 
 ### 1. API Composition
 
-- **How it Works**: A higher-level service (like an API Gateway or a dedicated aggregator service) is responsible for fetching data from multiple downstream services and combining it before returning it to the client. For example, to display an order details page, the aggregator would fetch the order data from the `Order Service` and the customer data from the `User Service` and then join them in memory.
+- **How it Works**: A higher-level service ...(like an [API Gateway](/system-design/securing-microservices-api-gateways-and-service-meshes) or a dedicated aggregator service)... is responsible for fetching data from multiple downstream services and combining it before returning it to the client. For example, to display an order details page, the aggregator would fetch the order data from the `Order Service` and the customer data from the `User Service` and then join them in memory.
 - **Best For**: Simple queries and use cases where the number of downstream services to call is small.
 
 ### 2. CQRS (Command Query Responsibility Segregation)
@@ -66,8 +66,21 @@ Instead of a database foreign key constraint, you simply store the ID of the ent
 
 ## Related Topics
 
-- [An Introduction to Microservices Architecture](/category/microservices/an-introduction-to-microservices-architecture)
-- [Microservices Communication: Synchronous vs. Asynchronous Patterns](/category/microservices/microservices-communication-patterns)
+### Microservices Architecture & Communication
+- [An Introduction to Microservices Architecture](/topics/an-introduction-to-microservices-architecture)
+- [Decomposing a Monolith into Microservices](/topics/decomposing-a-monolith-into-microservices)
+- [Microservices Communication Patterns](/topics/microservices-communication-patterns)
+
+### Distributed Data Management
+- [Distributed Database Consistency Patterns](/topics/distributed-database-consistency-patterns)
+- [CQRS (Command Query Responsibility Segregation)](https://martinfowler.com/bliki/CQRS.html)
+- [Event Sourcing Database Patterns](/topics/event-sourcing-database-patterns)
+- [API Composition Patterns](/topics/api-composition-patterns)
+
+### Database Architecture & Selection
+- [Database Scaling Patterns: Read Replicas, Connection Pooling, and Caching](/topics/database-scaling-patterns-read-replicas-connection-pooling-and-caching)
+- [NoSQL vs SQL: Database Selection Strategy](/topics/nosql-vs-sql-database-selection-strategy)
+- [Polyglot Persistence Patterns](/topics/polyglot-persistence-patterns)
 
 ## Need Help With Implementation?
 

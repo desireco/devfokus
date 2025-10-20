@@ -8,7 +8,7 @@ targetAudience: ['DevOps Engineers', 'Platform Engineers', 'SREs']
 estimatedReadingTime: 11
 tags: ['gitops', 'devops', 'kubernetes', 'ci/cd', 'argo cd']
 featured: true
-relatedTopics: ['infrastructure-as-code-principles-and-practices', 'an-introduction-to-kubernetes']
+relatedTopics: ['infrastructure-as-code-principles-and-practices', 'an-introduction-to-kubernetes', 'an-introduction-to-cicd', 'the-devops-handbook-key-principles', 'getting-started-with-docker', 'an-introduction-to-devsecops', 'securing-microservices-api-gateways-and-service-meshes', 'an-introduction-to-cloud-security-posture-management', 'securing-your-supply-chain-a-guide-to-managing-open-source-dependencies', 'choosing-the-right-load-balancer-a-practical-guide']
 relatedServices: ['gitops-consulting', 'kubernetes-management']
 meta:
   metaTitle: 'What is GitOps? A Guide to Managing Infrastructure with Git'
@@ -20,7 +20,7 @@ meta:
 
 ## Quick Summary (TL;DR)
 
-GitOps is a modern, declarative approach to managing infrastructure and applications where a Git repository is the **single source of truth**. The desired state of the entire system is described in a Git repo. An automated agent, running in the cluster, continuously compares the live state of the system with the state defined in the repo. If there is a difference (a "drift"), the agent automatically updates the live state to match the repo, ensuring the system is always in its desired configuration.
+GitOps is a modern, declarative approach to managing infrastructure and applications ...where a [Git](/devops/mastering-gitops-a-guide-to-managing-infrastructure-with-git) repository is the **single source of truth**. The desired state of the entire system is described in a Git repo. An automated agent, running in the cluster, continuously compares the live state of the system with the state defined in the repo. If there is a difference (a "drift"), the agent automatically updates the live state to match the repo, ensuring the system is always in its desired configuration.
 
 ## Key Takeaways
 
@@ -65,8 +65,21 @@ Rolling back is as simple as reverting the change in Git. Because Git is the sou
 
 ## Related Topics
 
-- [Infrastructure as Code (IaC): A Guide to Principles and Practices](/category/devops/infrastructure-as-code-principles-and-practices)
-- [An Introduction to Kubernetes: Orchestrating Containers at Scale](/category/devops/an-introduction-to-kubernetes)
+### Infrastructure & Deployment
+- [Infrastructure as Code: Principles and Practices](/topics/infrastructure-as-code-principles-and-practices)
+- [An Introduction to Kubernetes](/topics/an-introduction-to-kubernetes)
+- [An Introduction to CI/CD: Automating Your Software Delivery Pipeline](/topics/an-introduction-to-cicd)
+
+### DevOps Fundamentals
+- [The DevOps Handbook: Key Principles for a Successful Transformation](/topics/the-devops-handbook-key-principles)
+- [Getting Started with Docker](/topics/getting-started-with-docker)
+- [An Introduction to DevSecOps: Integrating Security into Your CI/CD Pipeline](/topics/an-introduction-to-devsecops)
+
+### Security & System Architecture
+- [Securing Microservices: API Gateways and Service Meshes](/topics/securing-microservices-api-gateways-and-service-meshes)
+- [An Introduction to Cloud Security Posture Management](/topics/an-introduction-to-cloud-security-posture-management)
+- [Securing Your Supply Chain: A Guide to Managing Open Source Dependencies](/topics/securing-your-supply-chain-a-guide-to-managing-open-source-dependencies)
+- [Choosing the Right Load Balancer: A Practical Guide](/topics/choosing-the-right-load-balancer-a-practical-guide)
 
 ## Need Help With Implementation?
 

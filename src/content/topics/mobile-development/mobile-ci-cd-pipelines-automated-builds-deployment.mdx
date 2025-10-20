@@ -8,7 +8,7 @@ targetAudience: ['DevOps Engineers', 'Mobile Developers', 'Release Managers']
 estimatedReadingTime: 9
 tags: ['mobile-cicd', 'fastlane', 'github-actions', 'automated-deployment', 'mobile-devops']
 featured: true
-relatedTopics: ['mobile-testing-strategies', 'app-store-deployment-optimization', 'mobile-backend-integration']
+relatedTopics: ['devops/an-introduction-to-cicd', 'devops/a-guide-to-automated-testing-in-devops', 'testing/security-testing-automation', 'app-store-deployment-aso-launch-strategy-market-optimization', 'mobile-testing-strategies-unit-integration-e2e-testing', 'mobile-app-performance-memory-battery-profiling', 'ios-development-swift-modern-swift-uikit-patterns', 'android-development-kotlin-modern-android-development-practices', 'devops/continuous-integration-ci-pipelines-best-practices', 'devops/infrastructure-as-code-best-practices-iac-security-compliance']
 relatedServices: ['mobile-ci-cd', 'devops-consulting', 'automation-implementation']
 meta:
   metaTitle: 'Mobile CI/CD Pipelines: Automated Builds and Deployment Guide'
@@ -27,7 +27,7 @@ meta:
 
 ## Quick Summary (TL;DR)
 
-Implement robust mobile CI/CD pipelines using GitHub Actions for orchestration, Fastlane for mobile-specific tasks, and cloud-based services (Bitrise/Codemagic) for specialized mobile builds. Automate code quality checks, unit testing, integration testing, security scanning, and multi-platform deployment to App Store and Google Play. Use environment-specific configurations, implement proper secrets management, and establish comprehensive rollback strategies to achieve 90% faster releases and 95% reduction in deployment errors.
+Implement robust mobile [CI/CD pipelines](/devops/an-introduction-to-cicd) using GitHub Actions... for orchestration, Fastlane for mobile-specific tasks, and cloud-based services (Bitrise/Codemagic) for specialized mobile builds. Automate code quality checks, unit testing, integration testing, [automated testing](/devops/a-guide-to-automated-testing-in-devops), [security scanning](/testing/security-testing-automation), and multi-platform deployment... Use environment-specific configurations, implement proper secrets management, and establish comprehensive rollback strategies to achieve 90% faster releases and 95% reduction in deployment errors.
 
 ## Key Takeaways
 
@@ -38,7 +38,7 @@ Implement robust mobile CI/CD pipelines using GitHub Actions for orchestration, 
 
 ## The Solution
 
-Mobile CI/CD requires handling platform-specific build requirements, certificate management, and multiple deployment targets. GitHub Actions provides powerful workflow orchestration while Fastlane handles mobile-specific tasks like code signing, testing, and deployment. Cloud-based mobile CI/CD services like Bitrise offer specialized mobile infrastructure with device matrix testing. The key is creating pipelines that handle both iOS and Android builds while maintaining security through proper secrets management and implementing quality gates to ensure only high-quality releases reach production.
+Mobile CI/CD requires handling platform-specific build requirements, certificate management, and multiple deployment targets. GitHub Actions provides powerful workflow orchestration while Fastlane handles mobile-specific tasks like code signing, testing, and deployment. Cloud-based mobile CI/CD services like Bitrise offer specialized mobile infrastructure with device matrix testing. The key is creating pipelines that ...handle both [iOS](/mobile-development/ios-development-swift-modern-swift-uikit-patterns) and [Android](/mobile-development/android-development-kotlin-modern-android-development-practices) builds... while maintaining security through proper secrets management and implementing quality gates to ensure only high-quality releases reach production.
 
 ## Implementation Steps
 
@@ -52,7 +52,7 @@ Mobile CI/CD requires handling platform-specific build requirements, certificate
    Integrate unit and integration tests in the pipeline, implement code quality analysis and security scanning, and set up automated testing across device matrices.
 
 4. **Configure Automated Deployment Strategies**
-   Implement staged deployment to App Store and Google Play, create rollback strategies for failed deployments, and establish monitoring and alerting for deployment health.
+   ...deployment to [App Store](/mobile-development/app-store-deployment-aso-launch-strategy-market-optimization) and Google Play. create rollback strategies for failed deployments, and establish monitoring and alerting for deployment health.
 
 ## Common Questions
 
@@ -78,4 +78,4 @@ Implement environment-specific configurations, use separate build configurations
 
 ## Need Help With Implementation?
 
-Implementing effective mobile CI/CD pipelines requires understanding both DevOps principles and mobile platform complexities. Built By Dakic specializes in creating robust CI/CD pipelines that automate mobile development workflows while maintaining security and quality standards. Our expertise in mobile automation can significantly improve your release velocity and reliability. Get in touch for a free consultation and let us help you build comprehensive mobile CI/CD solutions.
+Implementing effective mobile CI/CD pipelines requires ...understanding both [DevOps principles](/devops) and mobile platform complexities. Built By Dakic specializes in creating robust CI/CD pipelines that automate mobile development workflows while maintaining security and quality standards. Our expertise in mobile automation can significantly improve your release velocity and reliability. Get in touch for a free consultation and let us help you build comprehensive mobile CI/CD solutions.

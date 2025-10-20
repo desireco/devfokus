@@ -8,7 +8,7 @@ targetAudience: ['System Architects', 'Engineering Managers', 'Senior Engineers'
 estimatedReadingTime: 12
 tags: ['microservices', 'monolith', 'refactoring', 'strangler fig pattern']
 featured: false
-relatedTopics: ['an-introduction-to-microservices-architecture', 'data-management-in-microservices']
+relatedTopics: ['an-introduction-to-microservices-architecture', 'data-management-in-microservices', 'domain-driven-design-dd-fundamentals', 'database-schema-evolution-strategies', 'api-versioning-strategies-and-best-practices', 'legacy-system-modernization', 'software-refactoring-techniques', 'incremental-migration-strategies', 'strangler-fig-pattern-implementation', 'data-migration-and-replication-strategies']
 relatedServices: ['microservices-consulting', 'legacy-modernization']
 meta:
   metaTitle: 'How to Decompose a Monolith into Microservices: A Guide'
@@ -20,13 +20,13 @@ meta:
 
 ## Quick Summary (TL;DR)
 
-Decomposing a monolith into microservices is a gradual, strategic process, not a "big bang" rewrite. The most effective and lowest-risk approach is the **Strangler Fig Pattern**. This involves building new functionality as separate microservices and then incrementally "strangling" the monolith by routing traffic from the old application to the new services, one piece at a time. Over time, the new system grows around the old one, which eventually shrinks and can be retired.
+Decomposing a monolith into [microservices](/microservices/an-introduction-to-microservices-architecture) is a gradual, strategic process... The most effective and lowest-risk approach is the **Strangler Fig Pattern**. This involves building new functionality as separate microservices and then incrementally "strangling" the monolith by routing traffic from the old application to the new services, one piece at a time. Over time, the new system grows around the old one, which eventually shrinks and can be retired.
 
 ## Key Takeaways
 
 - **Don't Do a Big Bang Rewrite**: Attempting to rewrite an entire monolithic application as microservices from scratch is extremely risky, time-consuming, and often fails. An incremental approach is always better.
 - **Identify Service Boundaries with Domain-Driven Design (DDD)**: The hardest part of decomposition is finding the right service boundaries. Use principles from Domain-Driven Design (DDD) to identify "Bounded Contexts"—logical divisions within your business domain—which are excellent candidates for microservices.
-- **The Strangler Fig Pattern is Your Friend**: This pattern provides a safe, incremental path. You build a new service, put a routing layer (like an API Gateway) in front of the monolith, and redirect calls for a specific piece of functionality to the new service. The monolith continues to handle everything else until the next piece is extracted.
+- **The Strangler Fig Pattern is Your Friend**: This pattern provides a safe, incremental path. You build a new service, ...routing layer (like an [API Gateway](/system-design/securing-microservices-api-gateways-and-service-meshes)) in front of the monolith... The monolith continues to handle everything else until the next piece is extracted.
 
 ## The Solution: An Incremental Approach
 
@@ -57,7 +57,7 @@ A monolithic application often becomes a "big ball of mud" over time—difficult
 DDD is a software design philosophy that emphasizes modeling the software to match the business domain. A key concept is the **Bounded Context**, which is a clear boundary within which a specific domain model is defined and consistent. These bounded contexts are the ideal candidates for microservice boundaries.
 
 **Q: How do I handle the database?**
-Starting with a shared database between the monolith and the new service can be a pragmatic first step, but it maintains tight coupling. The goal should always be to move towards the database-per-service pattern. This often involves a complex data migration strategy that runs in parallel with the application decomposition.
+Starting with a shared database between the monolith and the new service can be a pragmatic first step, but it maintains tight coupling. The goal should always be to move towards the [database-per-service pattern](/microservices/data-management-in-microservices). This often involves a complex data migration strategy that runs in parallel with the application decomposition.
 
 **Q: What if the monolith's code is a mess?**
 It usually is. Before you can extract a component, you may need to do some internal refactoring within the monolith to untangle the code and create a clearer boundary. This is a necessary prerequisite for a successful extraction.
@@ -70,8 +70,21 @@ It usually is. Before you can extract a component, you may need to do some inter
 
 ## Related Topics
 
-- [An Introduction to Microservices Architecture](/category/microservices/an-introduction-to-microservices-architecture)
-- [Data Management in Microservices: The Database-per-Service Pattern](/category/microservices/data-management-in-microservices)
+### Microservices Architecture & Data
+- [An Introduction to Microservices Architecture](/topics/an-introduction-to-microservices-architecture)
+- [Data Management in Microservices](/topics/data-management-in-microservices)
+
+### Design Patterns & Architecture
+- [Domain-Driven Design (DDD) Fundamentals](/topics/domain-driven-design-dd-fundamentals)
+- [Database Schema Evolution Strategies](/topics/database-schema-evolution-strategies)
+- [API Versioning Strategies and Best Practices](/topics/api-versioning-strategies-and-best-practices)
+
+### Migration & Modernization
+- [Legacy System Modernization](/topics/legacy-system-modernization)
+- [Software Refactoring Techniques](/topics/software-refactoring-techniques)
+- [Incremental Migration Strategies](/topics/incremental-migration-strategies)
+- [Strangler Fig Pattern Implementation](/topics/strangler-fig-pattern-implementation)
+- [Data Migration and Replication Strategies](/topics/data-migration-and-replication-strategies)
 
 ## Need Help With Implementation?
 

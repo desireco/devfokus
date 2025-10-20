@@ -8,8 +8,7 @@ targetAudience: ['React Native Developers', 'Performance Engineers', 'Senior Mob
 estimatedReadingTime: 10
 tags: ['react-native', 'performance', 'optimization', 'native-modules', 'memory-management', 'profiling']
 featured: true
-relatedTopics:
-  ['react-native-development-best-practices', 'mobile-app-performance-memory', 'react-native-navigation-patterns']
+relatedTopics: ['react-native-development-component-architecture-best-practices', 'mobile-app-performance-memory-battery-profiling', 'react-native-navigation-deep-linking-complex-flows', 'javascript/javascript-performance-memory-management-optimization-techniques', 'performance-optimization/performance-profiling-complete-implementation-guide', 'mobile-testing-strategies-unit-integration-e2e-testing', 'javascript', 'performance-optimization', 'mobile-ci-cd-pipelines-automated-builds-deployment', 'react-native-state-management-redux-mobx-react-context-patterns']
 relatedServices: ['performance-optimization', 'react-native-consulting', 'native-module-development']
 meta:
   metaTitle: 'React Native Performance: Optimization and Native Module Integration Guide'
@@ -28,18 +27,18 @@ meta:
 
 ## Quick Summary (TL;DR)
 
-Optimize React Native applications by implementing FlatList with getItemLayout and keyExtractor, using Hermes JavaScript engine for 30% memory reduction, implementing native modules for CPU-intensive tasks, and leveraging Flipper for comprehensive profiling. Apply React.memo, useMemo, and useCallback strategically, avoid inline functions in render methods, and use image optimization with lazy loading. These techniques achieve 60% better frame rates and near-native performance while maintaining development efficiency.
+Optimize [React Native](/mobile-development/react-native-vs-flutter-vs-native-complete-framework-comparison) applications by implementing FlatList...
 
 ## Key Takeaways
 
 - **List Optimization**: Use FlatList instead of ScrollView for large lists, implement getItemLayout for consistent item heights, and keyExtractor for stable list item identities
 - **Native Modules**: Create custom native modules for performance-critical operations like image processing, cryptography, or hardware interactions
-- **Memory Management**: Enable Hermes JavaScript engine, implement proper cleanup in componentWillUnmount/useEffect, and avoid memory leaks in native modules
-- **Profiling Strategy**: Use Flipper for comprehensive performance analysis, implement custom performance metrics, and monitor production performance continuously
+- **[Memory Management](/javascript/javascript-performance-memory-management-optimization-techniques)**: Enable Hermes JavaScript engine...
+- **[Profiling Strategy](/performance-optimization/performance-profiling-complete-implementation-guide)**: Use Flipper for comprehensive performance analysis, implement custom performance metrics, and monitor production performance continuously
 
 ## The Solution
 
-React Native performance optimization requires understanding both JavaScript runtime characteristics and native platform constraints. The bridge communication overhead between JavaScript and native code is a primary bottleneck that can be mitigated through careful architecture and native module implementation. By leveraging Hermes JavaScript engine, optimizing list rendering with FlatList, and implementing custom native modules for critical performance paths, you can achieve near-native performance while maintaining development efficiency. Continuous profiling and monitoring ensure performance remains optimal as your application scales and evolves.
+...understanding both [JavaScript](/javascript) runtime characteristics and native platform constraints. The bridge communication overhead between JavaScript and native code is a primary bottleneck that can be mitigated through careful architecture and native module implementation. By leveraging Hermes JavaScript engine, optimizing list rendering with FlatList, and implementing custom native modules for critical performance paths, you can achieve near-native performance while maintaining development efficiency. Continuous profiling and monitoring ensure performance remains optimal as your application scales and evolves.
 
 ## Implementation Steps
 

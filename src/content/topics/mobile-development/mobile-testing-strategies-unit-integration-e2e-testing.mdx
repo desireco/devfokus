@@ -8,7 +8,7 @@ targetAudience: ['Mobile Developers', 'QA Engineers', 'Test Automation Engineers
 estimatedReadingTime: 9
 tags: ['mobile-testing', 'unit-testing', 'integration-testing', 'e2e-testing', 'device-testing', 'automation']
 featured: true
-relatedTopics: ['mobile-ci-cd-pipelines', 'mobile-backend-integration', 'react-native-development-best-practices']
+relatedTopics: ['testing/advanced-unit-testing-jest-vitest', 'testing/integration-testing-frameworks', 'testing/end-to-end-testing-cypress-playwright', 'testing/visual-regression-testing', 'mobile-ci-cd-pipelines-automated-builds-deployment', 'mobile-app-performance-memory-battery-profiling', 'mobile-backend-integration-apis-offline-storage-sync', 'react-native-performance-optimization-native-module-integration', 'devops/an-introduction-to-cicd', 'devops/a-guide-to-automated-testing-in-devops']
 relatedServices: ['mobile-testing', 'quality-assurance', 'test-automation']
 meta:
   metaTitle: 'Mobile Testing Strategies: Complete Guide to Mobile App Testing'
@@ -27,14 +27,14 @@ meta:
 
 ## Quick Summary (TL;DR)
 
-Implement comprehensive mobile testing with Jest for unit testing, XCTest/XCUITest for iOS, Espresso for Android, and Detox for cross-platform E2E testing. Use Firebase Test Lab for device testing, implement visual regression testing, and establish automated testing pipelines. Follow the testing pyramid with 70% unit tests, 20% integration tests, and 10% E2E tests to achieve 95% test coverage while maintaining test suite execution efficiency. Continuous testing across real devices ensures app quality across diverse device ecosystems.
+Implement comprehensive mobile testing with Jest for [unit testing](/testing/advanced-unit-testing-jest-vitest), XCTest/XCUITest for iOS, Espresso for Android, and Detox for cross-platform [E2E testing](/testing/end-to-end-testing-cypress-playwright). Use Firebase Test Lab for device testing, implement visual regression testing, and establish automated testing pipelines. Follow the testing pyramid with 70% unit tests, 20% integration tests, and 10% E2E tests to achieve 95% test coverage while maintaining test suite execution efficiency. Continuous testing across real devices ensures app quality across diverse device ecosystems.
 
 ## Key Takeaways
 
-- **Testing Pyramid**: Implement 70% unit tests for business logic, 20% integration tests for component interactions, and 10% E2E tests for user workflows
+- **Testing Pyramid**: ...unit testing, [integration testing](/testing/integration-testing-frameworks), and E2E tests for user workflows
 - **Platform-Specific Tools**: Use XCTest/XCUITest for iOS native testing, Espresso for Android testing, and Detox for React Native cross-platform testing
 - **Device Testing**: Leverage Firebase Test Lab and BrowserStack for testing across diverse device configurations, OS versions, and network conditions
-- **Visual Testing**: Implement visual regression testing with tools like Percy or Applitools to catch UI inconsistencies across devices and screen sizes
+- **Visual Testing**: Implement [visual regression testing](/testing/visual-regression-testing) with tools like Percy or Applitools...
 
 ## The Solution
 
@@ -49,7 +49,7 @@ Mobile testing requires addressing platform diversity, device fragmentation, and
    Use Detox for React Native integration tests, implement XCUITest for iOS UI integration, and create Espresso tests for Android component interactions.
 
 3. **Implement Comprehensive E2E Testing**
-   Design user journey test cases covering critical paths, implement platform-specific E2E test automation, and integrate with CI/CD pipelines for continuous testing.
+   Design user journey test cases covering critical paths, implement platform-specific E2E test automation, and integrate with [CI/CD pipelines](/devops/an-introduction-to-cicd) for continuous testing.
 
 4. **Set Up Device and Visual Testing**
    Configure Firebase Test Lab for device matrix testing, implement visual regression testing with automated screenshot comparison, and test across various network conditions.

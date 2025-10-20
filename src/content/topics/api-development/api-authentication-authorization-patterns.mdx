@@ -8,8 +8,8 @@ targetAudience: ['Backend developers', 'Security engineers', 'API architects']
 estimatedReadingTime: 10
 tags: ['api-authentication', 'api-authorization', 'oauth2', 'jwt', 'rbac', 'api-security']
 featured: true
-relatedTopics: ['api-security-best-practices', 'api-rate-limiting-implementation']
-relatedServices: ['api-security-consulting']
+relatedTopics: ['api-security-best-practices', 'api-rate-limiting-implementation', 'building-secure-apis-from-scratch', 'a-guide-to-api-authentication-with-oauth-2-0-and-jwts', 'best-practices-for-securely-storing-passwords', 'the-principle-of-least-privilege']
+relatedServices: ['api-development', 'security-best-practices', 'api-security-consulting']
 meta:
   metaTitle: 'API Authentication & Authorization Patterns | OAuth 2.0, JWT Guide'
   metaDescription: 'Complete guide to API authentication and authorization. Learn OAuth 2.0, JWT, API keys, and RBAC patterns for secure API access control.'
@@ -27,7 +27,7 @@ Use OAuth 2.0 for third-party access, JWT for stateless authentication, API keys
 - **Authentication vs. Authorization**: Authentication verifies who you are (OAuth 2.0, JWT), while authorization determines what you can do (RBAC, scopes)
 - **Token-based security**: JWT provides stateless authentication with embedded claims, while OAuth 2.0 handles delegated access for third-party integrations
 - **Principle of least privilege**: Grant minimum necessary permissions and use scopes to limit access to specific resources and operations
-- **Defense in depth**: Combine multiple security layers including HTTPS, token validation, rate limiting, and audit logging
+- **Defense in depth**: Combine multiple security layers including HTTPS, token validation, [rate limiting](/topics/api-rate-limiting-implementation), and audit logging
 
 ## The Solution
 
@@ -45,7 +45,7 @@ API authentication and authorization are critical for protecting your resources 
    Use strong signing algorithms (RS256), include necessary claims (sub, exp, iat, scopes), implement proper token validation, and manage key rotation securely.
 
 4. **Design Authorization Model**
-   Implement Role-Based Access Control (RBAC) with clear role definitions, resource-based permissions, and attribute-based access control (ABAC) for fine-grained control.
+   Implement Role-Based Access Control (RBAC) with clear role definitions, resource-based permissions, and attribute-based access control (ABAC) for fine-grained control. For a deep dive into this principle, see our [Principle of Least Privilege](/topics/the-principle-of-least-privilege) guide.
 
 5. **Set Up API Key Management**
    Generate unique API keys, implement key rotation policies, use key prefixes for identification, and track usage for monitoring and billing.
@@ -65,20 +65,29 @@ Use OAuth 2.0 when you need delegated access (third-party apps accessing user da
 Implement short-lived access tokens (15-60 minutes) with refresh tokens (days/weeks) for better security, and provide secure token refresh endpoints.
 
 **Q: Should I store tokens in databases?**
-Store refresh tokens in databases for revocation capability, but JWT access tokens can be stateless if they include expiration and proper signing.
+Store refresh tokens in databases for revocation capability, but JWT access tokens can be stateless if they include expiration and proper signing. For secure storage practices, see our [Best Practices for Securely Storing Passwords](/topics/best-practices-for-securely-storing-passwords) guide.
 
 ## Tools & Resources
 
-- **Auth0** - Complete authentication platform with OAuth 2.0, JWT, and social login support
+- **[Auth0](/topics/a-guide-to-api-authentication-with-oauth-2-0-and-jwts)** - Complete authentication platform (see detailed implementation guide)
 - **Okta** - Identity and access management platform with API security and user management
 - **Keycloak** - Open-source identity and access management solution with OAuth 2.0 and OpenID Connect
-- **Passport.js** - Node.js authentication middleware supporting multiple authentication strategies
+- **[Passport.js](/topics/javascript-testing-unit-testing-jest-modern-testing-strategies)** - Node.js authentication middleware (see JavaScript section)
 - **Spring Security** - Java security framework with comprehensive authentication and authorization features
 
 ## Related Topics
 
-- [API Security Best Practices](/topics/api-security-best-practices)
-- [API Rate Limiting Implementation](/topics/api-rate-limiting-implementation)
+### Core Security & Authentication
+- [API Security Best Practices](/topics/api-security-best-practices) - Comprehensive security implementation guide
+- [Building Secure APIs from Scratch](/topics/building-secure-apis-from-scratch) - End-to-end secure API development
+- [A Guide to API Authentication with OAuth 2.0 and JWTs](/topics/a-guide-to-api-authentication-with-oauth-2-0-and-jwts) - Detailed implementation guide
+- [The Principle of Least Privilege](/topics/the-principle-of-least-privilege) - Security best practices
+
+### Supporting Security Topics
+- [Best Practices for Securely Storing Passwords](/topics/best-practices-for-securely-storing-passwords) - Secure credential management
+- [API Rate Limiting Implementation](/topics/api-rate-limiting-implementation) - Protecting against abuse
+- [Understanding Cross-Site Scripting (XSS)](/topics/understanding-cross-site-scripting-xss-a-guide-to-prevention) - Web security considerations
+- [Security Headers for Web Applications](/topics/security-headers-for-web-applications-a-practical-guide) - Additional protection layers
 
 ## Need Help With Implementation?
 

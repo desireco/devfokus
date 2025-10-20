@@ -8,8 +8,7 @@ targetAudience: ['React Native Developers', 'Mobile Developers', 'State Manageme
 estimatedReadingTime: 9
 tags: ['react-native', 'state-management', 'redux', 'mobx', 'react-context', 'mobile-state']
 featured: true
-relatedTopics:
-  ['react-native-development-best-practices', 'react-native-navigation-patterns', 'mobile-app-architecture-patterns']
+relatedTopics: ['react-native-development-component-architecture-best-practices', 'react-native-navigation-deep-linking-complex-flows', 'mobile-app-architecture-patterns-mvc-mvp-mvvm-clean-architecture', 'performance-optimization', 'javascript/javascript-performance-memory-management-optimization-techniques', 'mobile-testing-strategies-unit-integration-e2e-testing', 'mobile-backend-integration-apis-offline-storage-sync', 'javascript', 'react-development', 'mobile-ci-cd-pipelines-automated-builds-deployment']
 relatedServices: ['state-management-consulting', 'react-native-development', 'mobile-architecture']
 meta:
   metaTitle: 'React Native State Management: Redux, MobX, and React Context Patterns'
@@ -35,11 +34,11 @@ Choose **Redux Toolkit** for complex applications requiring predictable state up
 - **Redux Toolkit**: Ideal for complex applications with predictable state updates, excellent debugging tools, and large team collaboration
 - **MobX**: Best for reactive programming needs, minimal boilerplate, and applications requiring fine-grained reactivity control
 - **React Context**: Perfect for localized state theming, authentication, and simple app state without external dependencies
-- **Performance Considerations**: Use state normalization, implement efficient selectors, and optimize re-renders with memoization techniques
+- **[Performance Considerations](/performance-optimization)**: Use state normalization, implement efficient selectors, and optimize re-renders with memoization techniques
 
 ## The Solution
 
-React Native state management requires balancing complexity with maintainability while considering mobile-specific constraints like memory usage and re-render performance. Each state management approach offers different trade-offs between developer experience, performance, and scalability. Redux Toolkit provides enterprise-grade state management with excellent debugging and predictable updates. MobX offers reactive programming with automatic dependency tracking and minimal boilerplate. React Context provides simple, built-in state management for localized use cases. Understanding these patterns enables you to choose the right approach for your specific application requirements and team capabilities.
+[React Native](/mobile-development/react-native-vs-flutter-vs-native-complete-framework-comparison) state management requires balancing complexity with maintainability... while considering mobile-specific constraints like memory usage and re-render performance. Each state management approach offers different trade-offs between developer experience, performance, and scalability. Redux Toolkit provides enterprise-grade state management with excellent debugging and predictable updates. MobX offers reactive programming with automatic dependency tracking and minimal boilerplate. React Context provides simple, built-in state management for localized use cases. Understanding these patterns enables you to choose the right approach for your specific application requirements and team capabilities.
 
 ## Implementation Steps
 
@@ -50,7 +49,7 @@ React Native state management requires balancing complexity with maintainability
    Design normalized state structures, implement proper action creators and reducers, or establish observable patterns for reactive state management.
 
 3. **Optimize Performance and Memory Usage**
-   Implement efficient selectors with memoization, optimize re-render patterns, and manage memory usage for large state objects in mobile environments.
+   Implement efficient selectors with memoization, optimize re-render patterns, ...and manage [memory usage](/javascript/javascript-performance-memory-management-optimization-techniques) for large state objects in mobile environments.
 
 4. **Establish Testing and Debugging Strategies**
    Create comprehensive state management tests, implement debugging tools and middleware, and establish state monitoring for production environments.

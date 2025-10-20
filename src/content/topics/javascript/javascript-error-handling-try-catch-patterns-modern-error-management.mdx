@@ -8,8 +8,7 @@ targetAudience: ['JavaScript Developers', 'Frontend Developers', 'Full-Stack Dev
 estimatedReadingTime: 8
 tags: ['javascript', 'error-handling', 'try-catch', 'async-errors', 'error-management', 'production']
 featured: true
-relatedTopics:
-  ['understanding-asynchronous-javascript', 'javascript-performance-optimization', 'javascript-testing-strategies']
+relatedTopics: ['understanding-asynchronous-javascript', 'javascript-performance-memory-management-optimization-techniques', 'javascript-testing-unit-testing-jest-modern-testing-strategies', 'javascript-dom-manipulation-modern-event-handling-performance', 'typescript-type-guards-narrowing-runtime-safety', 'api-development/api-error-handling-response-standards', 'an-introduction-to-modern-javascript-es6-and-beyond', 'api-development/restful-api-design-principles', 'javascript-modules-es-modules-vs-commonjs-moder-bundling', 'security-best-practices/a-guide-to-api-authentication-with-oauth-2-0-and-jwts']
 relatedServices: ['javascript-consulting', 'error-handling-implementation', 'production-monitoring']
 meta:
   metaTitle: 'JavaScript Error Handling: Complete Try/Catch and Error Management Guide'
@@ -58,7 +57,7 @@ Effective error handling transforms JavaScript applications from fragile systems
 ## Common Questions
 
 **Q: How do I handle errors in API calls elegantly?**
-Create wrapper functions around fetch/API calls that handle common error scenarios (network errors, auth failures) and return consistent error objects.
+Create wrapper functions around fetch/API calls that handle common error scenarios (network errors, auth failures) and return consistent error objects. See our [API Error Handling & Response Standards](/topics/api-error-handling-response-standards) for comprehensive patterns.
 
 **Q: Should I use try/catch around every function?**
 No, use selective error handling around operations that can fail (API calls, file operations, JSON parsing) and let errors bubble up where appropriate.
@@ -74,8 +73,18 @@ Wrap critical event handler logic in try/catch blocks and implement error bounda
 
 ## Related Topics
 
-- [Understanding Asynchronous JavaScript: Callbacks, Promises, and Async/Await](/topics/understanding-asynchronous-javascript)
-- [JavaScript Performance: Memory Management and Optimization Techniques](/topics/javascript-performance-optimization)
+### Core JavaScript Concepts
+- [Understanding Asynchronous JavaScript](/topics/understanding-asynchronous-javascript) - Async patterns & promises
+- [An Introduction to Modern JavaScript: ES6 and Beyond](/topics/an-introduction-to-modern-javascript-es6-and-beyond) - Modern JS features
+- [JavaScript DOM Manipulation & Event Handling](/topics/javascript-dom-manipulation-modern-event-handling-performance) - Event error handling
+
+### Testing & Performance
+- [JavaScript Testing: Unit Testing with Jest](/topics/javascript-testing-unit-testing-jest-modern-testing-strategies) - Error testing strategies
+- [JavaScript Performance: Memory Management](/topics/javascript-performance-memory-management-optimization-techniques) - Performance considerations
+
+### Type Safety & API Integration
+- [TypeScript Type Guards & Narrowing](/topics/typescript-type-guards-narrowing-runtime-safety) - Type-safe error handling
+- [API Error Handling & Response Standards](/topics/api-error-handling-response-standards) - API error patterns
 
 ## Need Help With Implementation?
 

@@ -8,7 +8,7 @@ targetAudience: ['DevOps Engineers', 'Security Engineers', 'Developers']
 estimatedReadingTime: 10
 tags: ['devsecops', 'devops', 'ci/cd', 'security', 'automation']
 featured: false
-relatedTopics: ['an-introduction-to-cicd', 'a-guide-to-automated-testing-in-devops']
+relatedTopics: ['an-introduction-to-cicd', 'a-guide-to-automated-testing-in-devops', 'securing-your-supply-chain-a-guide-to-managing-open-source-dependencies', 'building-secure-applications-from-scratch', 'building-secure-apis-from-scratch', 'an-introduction-to-cloud-security-posture-management', 'the-principle-of-least-privilege', 'content-security-policy-csp', 'security-headers-for-web-applications-a-practical-guide', 'the-devops-handbook-key-principles']
 relatedServices: ['devsecops-consulting', 'ci-cd-pipeline-implementation']
 meta:
   metaTitle: 'What is DevSecOps? A Guide to Integrating Security in CI/CD'
@@ -20,7 +20,7 @@ meta:
 
 ## Quick Summary (TL;DR)
 
-DevSecOps is a cultural and technical shift that integrates security practices into the DevOps lifecycle. Instead of treating security as a final gate before release, DevSecOps involves automating security checks and tests throughout the entire CI/CD pipeline. This is often called "shifting security left"—moving security from the end of the development process to the very beginning. The goal is to make security a shared responsibility and to build secure software from the start, rather than trying to patch it later.
+DevSecOps is a cultural and technical shift that integrates security practices into the [DevOps](/devops) lifecycle. Instead of treating security as a final gate before release, DevSecOps involves automating security checks and tests ...throughout the entire [CI/CD pipeline](/devops/an-introduction-to-cicd). This is often called "shifting security left"—moving security from the end of the development process to the very beginning. The goal is ...to make [security](/security-best-practices) a shared responsibility and to build secure software from the start..., rather than trying to patch it later.
 
 ## Key Takeaways
 
@@ -35,7 +35,7 @@ In traditional development models, security testing often happens at the very en
 ## Implementation Steps
 
 1.  **Integrate a Secret Scanner**
-    As a first step, add a tool like Git-secrets or TruffleHog to your CI pipeline. This tool should run on every commit to scan your codebase for accidentally committed secrets like API keys or passwords, and fail the build if any are found.
+    As a first step, add a tool like [Git-secrets](/devops/mastering-gitops-a-guide-to-managing-infrastructure-with-git) or TruffleHog to your CI pipeline. This tool should run on every commit to scan your codebase for accidentally committed secrets like API keys or passwords, and fail the build if any are found.
 
 2.  **Add Software Composition Analysis (SCA)**
     Use a tool like OWASP Dependency-Check, Snyk, or GitHub's Dependabot to automatically scan your project's dependencies for known vulnerabilities (CVEs). This should be a required step in your CI pipeline.
@@ -65,8 +65,21 @@ SAST is a "white-box" testing method; it looks at the application's source code 
 
 ## Related Topics
 
-- [An Introduction to CI/CD: Automating Your Software Delivery Pipeline](/category/devops/an-introduction-to-cicd)
-- [A Guide to Automated Testing in DevOps: From Unit Tests to End-to-End](/category/devops/a-guide-to-automated-testing-in-devops)
+### DevOps & Testing Integration
+- [An Introduction to CI/CD: Automating Your Software Delivery Pipeline](/topics/an-introduction-to-cicd)
+- [A Guide to Automated Testing in DevOps: From Unit Tests to End-to-End](/topics/a-guide-to-automated-testing-in-devops)
+- [The DevOps Handbook: Key Principles for a Successful Transformation](/topics/the-devops-handbook-key-principles)
+
+### Security Fundamentals
+- [Building Secure Applications from Scratch](/topics/building-secure-applications-from-scratch)
+- [Building Secure APIs from Scratch](/topics/building-secure-apis-from-scratch)
+- [Securing Your Supply Chain: A Guide to Managing Open Source Dependencies](/topics/securing-your-supply-chain-a-guide-to-managing-open-source-dependencies)
+
+### Advanced Security Practices
+- [An Introduction to Cloud Security Posture Management](/topics/an-introduction-to-cloud-security-posture-management)
+- [The Principle of Least Privilege](/topics/the-principle-of-least-privilege)
+- [Content Security Policy (CSP)](/topics/content-security-policy-csp)
+- [Security Headers for Web Applications: A Practical Guide](/topics/security-headers-for-web-applications-a-practical-guide)
 
 ## Need Help With Implementation?
 

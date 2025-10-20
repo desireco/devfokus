@@ -8,12 +8,7 @@ targetAudience: ['React Native Developers', 'Mobile Developers', 'Frontend Devel
 estimatedReadingTime: 9
 tags: ['react-native', 'navigation', 'deep-linking', 'routing', 'user-flows', 'mobile-navigation']
 featured: true
-relatedTopics:
-  [
-    'react-native-performance-optimization',
-    'react-native-development-best-practices',
-    'react-native-state-management-patterns',
-  ]
+relatedTopics: ['react-native-performance-optimization-native-module-integration', 'react-native-development-component-architecture-best-practices', 'react-native-state-management-redux-mobx-react-context-patterns', 'security-best-practices/a-guide-to-api-authentication-with-oauth-2-0-and-jwts', 'mobile-ui-ux-patterns-native-design-guidelines', 'mobile-app-architecture-patterns-mvc-mvp-mvvm-clean-architecture', 'mobile-ci-cd-pipelines-automated-builds-deployment', 'performance-optimization', 'ios-development-swift-modern-swift-uikit-patterns', 'android-development-kotlin-modern-android-development-practices']
 relatedServices: ['react-native-development', 'mobile-app-consulting', 'navigation-implementation']
 meta:
   metaTitle: 'React Native Navigation: Deep Linking and Complex Flow Implementation'
@@ -32,13 +27,13 @@ meta:
 
 ## Quick Summary (TL;DR)
 
-Implement robust React Native navigation using React Navigation library with proper navigators (Stack, Tab, Drawer), deep linking configuration, and nested navigation hierarchies. Use Linking API for deep linking, implement proper navigation state management, and create consistent navigation patterns across iOS and Android. Structure navigation with authentication flows, implement tab-based navigation with proper stack management, and use navigation listeners for behavior tracking to achieve 90% reduction in navigation-related bugs.
+Implement robust [React Native](/mobile-development/react-native-vs-flutter-vs-native-complete-framework-comparison) navigation using React Navigation library... with proper navigators (Stack, Tab, Drawer), deep linking configuration, and nested navigation hierarchies. Use Linking API for deep linking, implement proper navigation state management, ...across [iOS](/mobile-development/ios-development-swift-modern-swift-uikit-patterns) and [Android](/mobile-development/android-development-kotlin-modern-android-development-practices). Structure navigation with authentication flows, implement tab-based navigation with proper stack management, and use navigation listeners for behavior tracking to achieve 90% reduction in navigation-related bugs.
 
 ## Key Takeaways
 
 - **Navigator Selection**: Use Stack Navigator for hierarchical flows, Tab Navigator for parallel navigation, and Drawer Navigator for desktop-like navigation patterns
 - **Deep Linking**: Implement Linking API with proper URL schemes, configure navigation linking, and handle universal links for web-to-app transitions
-- **State Management**: Manage navigation state properly, implement nested navigation hierarchies, and handle authentication flows with conditional navigation
+- **[State Management](/mobile-development/react-native-state-management-redux-mobx-react-context-patterns)**: Manage navigation state properly...
 - **Platform Integration**: Respect platform navigation patterns, implement proper gesture handling, and integrate with device navigation controls
 
 ## The Solution
@@ -54,9 +49,9 @@ React Native navigation requires understanding both mobile navigation patterns a
    Configure URL schemes with Linking API, implement navigation linking in React Navigation, and handle universal links for seamless web-to-app transitions.
 
 3. **Create Authentication and Conditional Navigation**
-   Implement authentication flows with proper navigation redirection, create conditional navigation based on user state, and handle session lifecycle management.
+   Implement [authentication](/security-best-practices/a-guide-to-api-authentication-with-oauth-2-0-and-jwts) flows with proper navigation redirection, create conditional navigation based on user state, and handle session lifecycle management.
 
-4. **Optimize Navigation Performance**
+4. **Optimize Navigation [Performance](/performance-optimization)**
    Implement lazy loading for navigation stacks, optimize navigation transitions, and monitor navigation performance using custom metrics.
 
 ## Common Questions

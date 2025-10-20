@@ -1,9 +1,9 @@
 ---
 import { getCollection } from "astro:content";
 import CategoryCard from "@/components/category/CategoryCard.astro";
-import TopicCard from "@/components/topic/TopicCard.astro";
 import HeroSection from "@/components/landing-page/HeroSection.astro";
 import LatestSection from "@/components/landing-page/LatestSection.astro";
+import TopicCard from "@/components/topic/TopicCard.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/consts";
 import MainLayout from "@/layouts/MainLayout.astro";
 
@@ -50,7 +50,10 @@ const allTopics = (await getCollection("topics"))
     relatedPosts: topic.data.relatedPosts,
     relatedCategories: topic.data.relatedCategories,
   }))
-  .sort((a, b) => new Date(b.publishDate).valueOf() - new Date(a.publishDate).valueOf());
+  .sort(
+    (a, b) =>
+      new Date(b.publishDate).valueOf() - new Date(a.publishDate).valueOf(),
+  );
 
 const allTags = [
   ...allCategories.flatMap((category) => category.targetAudience || []),
@@ -58,8 +61,10 @@ const allTags = [
 ];
 const uniqueTags = [...new Set(allTags)];
 
-const featuredCategories = allCategories.filter(category => category.featured).slice(0, 6);
-const featuredTopics = allTopics.filter(topic => topic.featured).slice(0, 6);
+const featuredCategories = allCategories
+  .filter((category) => category.featured)
+  .slice(0, 6);
+const featuredTopics = allTopics.filter((topic) => topic.featured).slice(0, 6);
 ---
 
 <MainLayout

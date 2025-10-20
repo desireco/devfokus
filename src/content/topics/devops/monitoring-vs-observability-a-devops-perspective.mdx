@@ -8,7 +8,7 @@ targetAudience: ['DevOps Engineers', 'SREs', 'Developers']
 estimatedReadingTime: 8
 tags: ['observability', 'monitoring', 'devops', 'sre', 'metrics']
 featured: false
-relatedTopics: ['an-introduction-to-cicd', 'the-devops-handbook-key-principles']
+relatedTopics: ['the-devops-handbook-key-principles', 'an-introduction-to-cicd', 'introduction-to-observability-logs-metrics-and-traces', 'securing-microservices-api-gateways-and-service-meshes', 'designing-for-failure-building-fault-tolerant-systems', 'an-introduction-to-kubernetes', 'infrastructure-as-code-principles-and-practices', 'a-guide-to-automated-testing-in-devops', 'an-introduction-to-devsecops', 'choosing-the-right-load-balancer-a-practical-guide']
 relatedServices: ['devops-consulting', 'sre-enablement']
 meta:
   metaTitle: "Monitoring vs. Observability: What's the Difference? (DevOps Guide)"
@@ -16,7 +16,7 @@ meta:
   keywords: ['monitoring vs observability', 'observability', 'monitoring', 'devops', 'sre']
 ---
 
-# Monitoring vs. Observability: A DevOps Perspective
+# Monitoring vs. Observability: A [DevOps](/devops) Perspective
 
 ## Quick Summary (TL;DR)
 
@@ -30,7 +30,7 @@ meta:
 
 ## The Solution
 
-In the era of simple, monolithic applications, monitoring was sufficient. You could track a few key health indicators and have a good sense of the system's state. But in a modern microservices architecture, failures are complex and emergent. A problem might only occur when a specific user, on a specific device, calls a specific service that then calls another failing service. You can't possibly create a dashboard for every combination. Observability solves this by giving you raw, granular data and the tools to explore it. It shifts the focus from pre-defined dashboards to a more powerful, investigative approach to understanding system behavior.
+In the era of simple, monolithic applications, monitoring was sufficient. You could track a few key health indicators and have a good sense of the system's state. But in a modern [microservices architecture](/microservices/an-introduction-to-microservices-architecture), failures are complex and emergent. A problem might only occur when a specific user, on a specific device, calls a specific service that then calls another failing service. You can't possibly create a dashboard for every combination. Observability solves this by giving you raw, granular data and the tools to explore it. It shifts the focus from pre-defined dashboards to a more powerful, investigative approach to understanding system behavior.
 
 ## Implementation Steps
 
@@ -41,7 +41,7 @@ In the era of simple, monolithic applications, monitoring was sufficient. You co
     Ensure all your logs are in a structured format like JSON. This makes them machine-readable and allows your observability platform to index them on any field, which is critical for effective searching and filtering during an investigation.
 
 3.  **Implement Distributed Tracing**
-    For any distributed system, distributed tracing is non-negotiable. It's the only way to understand the full path of a request as it hops between services. Use a standard like OpenTelemetry to instrument your services to propagate trace context.
+    For any [distributed system](/database-architecture/distributed-database-consistency-patterns), distributed tracing is non-negotiable. It's the only way to understand the full path of a request as it hops between services. Use a standard like OpenTelemetry to instrument your services to propagate trace context.
 
 4.  **Choose a Tool That Correlates Data**
     A good observability platform doesn't just show you logs, metrics, and traces in separate tabs. It seamlessly links them together. You should be able to jump from a spike in a metrics dashboard to the specific traces that caused it, and then to the detailed logs for one of those traces, all within a few clicks.
@@ -65,8 +65,21 @@ A great place to start is by implementing structured logging and adding more con
 
 ## Related Topics
 
-- [An Introduction to CI/CD: Automating Your Software Delivery Pipeline](/category/devops/an-introduction-to-cicd)
-- [The DevOps Handbook: Key Principles for a Successful Transformation](/category/devops/the-devops-handbook-key-principles)
+### DevOps Fundamentals & Testing
+- [The DevOps Handbook: Key Principles for a Successful Transformation](/topics/the-devops-handbook-key-principles)
+- [An Introduction to CI/CD: Automating Your Software Delivery Pipeline](/topics/an-introduction-to-cicd)
+- [A Guide to Automated Testing in DevOps](/topics/a-guide-to-automated-testing-in-devops)
+
+### Observability & System Architecture
+- [Introduction to Observability: Logs, Metrics, and Traces](/topics/introduction-to-observability-logs-metrics-and-traces)
+- [Securing Microservices: API Gateways and Service Meshes](/topics/securing-microservices-api-gateways-and-service-meshes)
+- [Designing for Failure: Building Fault-Tolerant Systems](/topics/designing-for-failure-building-fault-tolerant-systems)
+
+### Infrastructure & Security
+- [An Introduction to Kubernetes](/topics/an-introduction-to-kubernetes)
+- [Infrastructure as Code: Principles and Practices](/topics/infrastructure-as-code-principles-and-practices)
+- [An Introduction to DevSecOps: Integrating Security into Your CI/CD Pipeline](/topics/an-introduction-to-devsecops)
+- [Choosing the Right Load Balancer: A Practical Guide](/topics/choosing-the-right-load-balancer-a-practical-guide)
 
 ## Need Help With Implementation?
 

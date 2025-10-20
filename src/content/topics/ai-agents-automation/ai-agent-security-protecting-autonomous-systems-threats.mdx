@@ -16,7 +16,7 @@ tags: ['ai-security', 'agent-protection', 'cybersecurity', 'autonomous-systems',
 
 featured: true
 
-relatedTopics: ['agent-integration-patterns', 'building-autonomous-ai-agents', 'multi-agent-systems']
+relatedTopics: ['implementing-adversarial-testing-for-ai-model-robustness', 'guide-to-differential-privacy-in-machine-learning', 'common-ai-agent-implementation-mistakes-avoid', 'building-autonomous-ai-agents-complete-implementation-guide', 'web-security-best-practices-for-modern-applications', 'ai-risk-management-and-mitigation-strategies', 'multi-agent-systems-coordination-patterns-communication-protocols', 'privacy-enhancing-technologies-for-data-protection', 'docker-and-containerization-fundamentals', 'an-introduction-to-cicd']
 relatedServices: ['ai-security-auditing']
 
 meta:
@@ -29,7 +29,7 @@ meta:
 
 ## The Problem
 
-As AI agents become increasingly autonomous and interconnected, they present attractive targets for malicious actors seeking to exploit their capabilities for financial gain, data theft, or system disruption. Unlike traditional software, AI agents introduce unique security challenges including adversarial attacks on machine learning models, manipulation of decision-making processes, and potential for emergent malicious behavior from compromised agents. The consequences of security breaches in autonomous systems can be severe, ranging from financial losses and privacy violations to physical harm in safety-critical applications.
+As AI agents become increasingly autonomous and interconnected, they present attractive targets for malicious actors seeking to exploit their capabilities for financial gain, data theft, or system disruption. Unlike traditional software, AI agents introduce unique security challenges ...including [adversarial attacks on machine learning models](/ai-ethics-safety/implementing-adversarial-testing-for-ai-model-robustness)... manipulation of decision-making processes, and potential for emergent malicious behavior from compromised agents. The consequences of security breaches in autonomous systems can be severe, ranging from financial losses and privacy violations to physical harm in safety-critical applications.
 
 ## Why This Matters
 
@@ -43,7 +43,7 @@ AI agent security requires a multi-layered approach combining traditional cybers
 
 ### Agent-Level Security
 
-**Secure Runtime Environment**: Execute agents in sandboxed environments with restricted file system access, network controls, and resource limits. Use containerization with security-hardened base images and runtime monitoring.
+**Secure Runtime Environment**: Execute agents in sandboxed environments with restricted file system access, network controls, and resource limits. Use [containerization](/devops-cloud/docker-containerization-step-by-step) with security-hardened base images and runtime monitoring.
 
 **Model Protection**: Implement watermarking and anti-tampering mechanisms for AI models to prevent theft or unauthorized modification. Use encrypted model storage and secure loading procedures.
 
@@ -55,7 +55,7 @@ AI agent security requires a multi-layered approach combining traditional cybers
 
 **Message Authentication**: Implement cryptographic signatures for all agent communications to ensure message integrity and prevent message injection or replay attacks.
 
-**Secure Service Discovery**: Use authenticated service discovery mechanisms to prevent agents from connecting to malicious or compromised services.
+**Secure Service Discovery**: Use authenticated [service discovery](/microservices/a-guide-to-service-discovery) mechanisms... to prevent agents from connecting to malicious or compromised services.
 
 ### Infrastructure Security
 
@@ -181,7 +181,7 @@ class AdversarialDefense:
 
 ### Common Attack Vectors
 
-**Data Poisoning**: Protect training data integrity through validation, anomaly detection, and data provenance tracking. Use techniques like differential privacy to limit impact of poisoned samples.
+**Data Poisoning**: Protect training data integrity through validation, anomaly detection, and data provenance tracking. Use techniques like [differential privacy](/ai-ethics-safety/guide-to-differential-privacy-in-machine-learning) to limit impact of poisoned samples.
 
 **Model Extraction**: Prevent model theft through rate limiting on API access, query result monitoring, and model watermarking for identification in case of theft.
 
@@ -203,7 +203,7 @@ class AdversarialDefense:
 
 **Red Team Exercises**: Regular red team exercises simulating real-world attack scenarios against agent systems to test defensive capabilities and response procedures.
 
-**Automated Security Scanning**: Integrate automated security scanning into CI/CD pipelines to detect vulnerabilities before deployment with AI-specific vulnerability databases.
+**Automated Security Scanning**: Integrate automated security scanning into [CI/CD pipelines](/devops/an-introduction-to-cicd)...
 
 ### Compliance and Auditing
 
@@ -222,7 +222,7 @@ Implement graduated autonomy models where agents have increased autonomy as they
 Implement agent-to-agent authentication, secure communication channels, and distributed trust mechanisms. Use consensus algorithms and behavioral monitoring to detect compromised agents within multi-agent environments.
 
 **Q: How do you handle security updates for deployed AI agents?**
-Use rolling update mechanisms with automated rollback capabilities, blue-green deployments for zero-downtime updates, and canary releases to test security updates before full deployment.
+Use rolling update mechanisms with automated rollback capabilities, ...[blue-green deployments](/mlops-ai-infrastructure/blue-green-vs-canary-deployments-for-ml-models) for zero-downtime updates..., and canary releases to test security updates before full deployment.
 
 ## Tools & Resources
 
@@ -233,9 +233,23 @@ Use rolling update mechanisms with automated rollback capabilities, blue-green d
 
 ## Related Topics
 
-- [Agent Integration Patterns]({{/topics/agent-integration-patterns}})
-- [Building Autonomous AI Agents]({{/topics/building-autonomous-ai-agents}})
-- [Multi-Agent Systems]({{/topics/multi-agent-systems}})
+### AI Security & Testing
+- [Implementing Adversarial Testing for AI Model Robustness](/category/ai-ethics-safety/implementing-adversarial-testing-for-ai-model-robustness)
+- [A Guide to Differential Privacy in Machine Learning](/category/ai-ethics-safety/guide-to-differential-privacy-in-machine-learning)
+
+### Agent Development & Architecture
+- [Common AI Agent Implementation Mistakes and How to Avoid Them](/category/ai-agents-automation/common-ai-agent-implementation-mistakes-avoid)
+- [Building Autonomous AI Agents: Complete Implementation Guide](/category/ai-agents-automation/building-autonomous-ai-agents-complete-implementation-guide)
+- [Multi-Agent Systems: Coordination Patterns and Communication Protocols](/category/ai-agents-automation/multi-agent-systems-coordination-patterns-communication-protocols)
+
+### Security & Risk Management
+- [Web Security Best Practices for Modern Applications](/category/security-best-practices/web-security-best-practices-for-modern-applications)
+- [AI Risk Management and Mitigation Strategies](/category/ai-ethics-safety/ai-risk-management-and-mitigation-strategies)
+- [Privacy-Enhancing Technologies for Data Protection](/category/security-best-practices/privacy-enhancing-technologies-for-data-protection)
+
+### DevOps & Infrastructure
+- [Docker and Containerization Fundamentals](/category/devops-cloud/docker-and-containerization-step-by-step)
+- [An Introduction to CI/CD](/category/devops/an-introduction-to-cicd)
 
 ## Struggling with AI Agent Security?
 

@@ -16,7 +16,7 @@ estimatedReadingTime: 9
 tags: ['api-documentation', 'openapi', 'swagger', 'api-design', 'documentation', 'api-specs', 'developer-experience']
 featured: false
 relatedTopics:
-  ['api-security-best-practices', 'graphql-vs-rest-apis', 'api-performance-optimization', 'api-testing-strategies']
+  ['api-security-best-practices', 'graphql-vs-rest-apis', 'api-performance-optimization', 'api-testing-strategies', 'api-authentication-authorization-patterns', 'api-error-handling-response-standards', 'restful-api-design-principles', 'api-documentation-tools-platforms']
 relatedServices: ['API Development', 'Documentation Services', 'Developer Experience']
 meta:
   title: 'API Documentation with OpenAPI: Complete Guide 2024'
@@ -70,11 +70,11 @@ info:
     with role-based access control.
 
     ## Authentication
-    This API uses JWT tokens for authentication. Include the token in the 
-    Authorization header: `Bearer <your-token>`
+    This API uses JWT tokens for authentication. Include the token in the
+    Authorization header: `Bearer <your-token>`. For detailed authentication patterns, see our [API Authentication & Authorization guide](/topics/api-authentication-authorization-patterns).
 
     ## Rate Limiting
-    API calls are limited to 1000 requests per hour per API key.
+    API calls are limited to 1000 requests per hour per API key. See our [API Rate Limiting implementation](/topics/api-rate-limiting-implementation) for details.
 
     ## Support
     For technical support, contact: api-support@example.com
@@ -453,6 +453,12 @@ paths:
                 $ref: '#/components/schemas/Error'
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded
           content:
             application/json:
               schema:
@@ -923,7 +929,7 @@ A: Include everything a developer needs to successfully use your API: clear desc
 A: OpenAPI is the specification standard (formerly called Swagger Specification). Swagger refers to the tools that work with OpenAPI specs, like Swagger UI.
 
 **Q: How do I keep documentation in sync with code changes?**
-A: Use automated tools like swagger-jsdoc to generate docs from code comments, implement CI/CD validation, and make documentation updates part of your development process.
+A: Use automated tools like swagger-jsdoc to generate docs from code comments, implement CI/CD validation, and make documentation updates part of your development process. See our [API Testing Strategies](/topics/api-testing-strategies) for automated validation approaches.
 
 **Q: Should I provide SDKs for my API?**
 A: Yes, if you want to improve developer experience. Generated SDKs reduce integration time and provide type safety for developers using your API.
@@ -934,7 +940,7 @@ A: Yes, if you want to improve developer experience. Generated SDKs reduce integ
 
 - **Swagger UI**: Interactive API documentation
 - **Redoc**: Beautiful API documentation
-- **Postman**: API testing and documentation
+- **[Postman](/topics/api-testing-strategies)**: API testing and documentation (see testing guide)
 - **Insomnia**: REST client with documentation features
 
 ### Code Generation
@@ -960,10 +966,21 @@ A: Yes, if you want to improve developer experience. Generated SDKs reduce integ
 
 ## Related Topics
 
-- [API Security Best Practices](/topics/api-security-best-practices)
-- [API Testing Strategies](/topics/api-testing-strategies)
-- [GraphQL vs REST APIs](/topics/graphql-vs-rest-apis)
-- [API Performance Optimization](/topics/api-performance-optimization)
+### Core API Development
+- [API Security Best Practices](/topics/api-security-best-practices) - Comprehensive security implementation
+- [API Authentication & Authorization Patterns](/topics/api-authentication-authorization-patterns) - Secure access management
+- [API Error Handling & Response Standards](/topics/api-error-handling-response-standards) - Proper error responses
+- [RESTful API Design Principles](/topics/restful-api-design-principles) - API design fundamentals
+
+### Documentation & Testing
+- [API Testing Strategies](/topics/api-testing-strategies) - Automated testing approaches
+- [API Documentation Tools & Platforms](/topics/api-documentation-tools-platforms) - Documentation ecosystem
+- [GraphQL vs REST APIs](/topics/graphql-vs-rest-apis) - API architecture comparison
+- [API Performance Optimization](/topics/api-performance-optimization) - Performance considerations
+
+### Developer Experience
+- [API Rate Limiting Implementation](/topics/api-rate-limiting-implementation) - Protecting your APIs
+- [Popular API Frameworks Comparison](/topics/popular-api-frameworks-comparison) - Framework selection guide
 
 ## Need Help With Implementation?
 

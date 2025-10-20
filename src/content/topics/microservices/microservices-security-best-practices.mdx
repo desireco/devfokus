@@ -35,6 +35,13 @@ related_topics:
     'securing-microservices-api-gateways-and-service-meshes',
     'an-introduction-to-microservices-architecture',
     'microservices-communication-patterns',
+    'implementing-secure-api-design-principles',
+    'authentication-and-authorization-best-practices',
+    'owasp-top-10-vulnerability-prevention',
+    'encryption-and-hashing-best-practices',
+    'zero-trust-security-model',
+    'api-rate-limiting-implementation-strategies',
+    'system-reliability-and-sre-practices',
   ]
 related_posts: []
 services: ['security-consulting', 'microservices-architecture', 'api-security']
@@ -50,7 +57,7 @@ Microservices security requires a comprehensive approach addressing authenticati
 
 - **Zero Trust Architecture**: Never trust, always verify every service request
 - **API Gateway Security**: Centralized authentication, rate limiting, and threat protection
-- **Service Mesh Security**: mTLS, service identity, and traffic encryption
+- **[Service Mesh Security](/system-design/securing-microservices-api-gateways-and-service-meshes)**: mTLS, service identity, and traffic encryption
 - **Secret Management**: Centralized secret rotation and access control
 - **Compliance Automation**: Automated policy enforcement and audit trails
 
@@ -60,7 +67,7 @@ Microservices security requires a comprehensive approach addressing authenticati
 
 ### Who Struggles with Microservices Security
 
-Microservices architectures introduce unique security challenges that traditional monolithic applications don't face:
+Microservices architectures introduce unique security challenges that ...traditional [monolithic applications](/microservices/decomposing-a-monolith-into-microservices) don't face:
 
 - **70% of organizations** report security as their biggest microservices adoption barrier
 - **60% of breaches** in distributed systems originate from service-to-service communication
@@ -95,7 +102,7 @@ Microservices architectures introduce unique security challenges that traditiona
 - Security configuration management across services
 - Monitoring and logging for security incidents
 - Patch management and vulnerability remediation
-- Security testing in CI/CD pipelines
+- Security testing in [CI/CD pipelines](/devops/an-introduction-to-cicd)
 
 ---
 
@@ -126,14 +133,14 @@ Microservices architectures introduce unique security challenges that traditiona
 
 ### Key Security Components
 
-**API Gateway Security**
+**[API Gateway Security](/system-design/securing-microservices-api-gateways-and-service-meshes)**
 
 - Centralized authentication and authorization
 - Request validation and sanitization
 - Rate limiting and DDoS protection
 - API threat detection and prevention
 
-**Service Mesh Security**
+**[Service Mesh Security](/system-design/securing-microservices-api-gateways-and-service-meshes)**
 
 - Mutual TLS (mTLS) for service communication
 - Service identity management
@@ -363,7 +370,7 @@ data:
     }
 
     # Enable auth methods
-    auth "kubernetes" {
+    auth "[kubernetes](/devops/an-introduction-to-kubernetes)" {
       path = "kubernetes/"
     }
 ---
@@ -462,7 +469,7 @@ class SecretManager:
 #### Secure Container Configuration
 
 ```dockerfile
-# Secure multi-stage Dockerfile for microservices
+# Secure multi-stage [Dockerfile](/devops/getting-started-with-docker) for microservices
 FROM node:18-alpine AS builder
 WORKDIR /app
 
@@ -665,7 +672,7 @@ class ComplianceChecker:
 - **Apigee** - Google Cloud's API management platform
 - **AWS API Gateway** - Managed API gateway with AWS integration
 
-**Service Mesh Security**
+**[Service Mesh Security](/system-design/securing-microservices-api-gateways-and-service-meshes)**
 
 - **Istio** - Comprehensive service mesh with security features
 - **Linkerd** - Lightweight service mesh focused on simplicity
@@ -715,9 +722,21 @@ class ComplianceChecker:
 
 ## Related Topics
 
+### Microservices Security & Architecture
 - **Securing Microservices: API Gateways and Service Meshes** - Advanced security patterns
 - **An Introduction to Microservices Architecture** - Foundation concepts
 - **Microservices Communication Patterns** - Secure communication strategies
+
+### API & Application Security
+- **Implementing Secure API Design Principles** - Comprehensive API security
+- **Authentication and Authorization Best Practices** - Identity and access management
+- **OWASP Top 10 Vulnerability Prevention** - Common security threats
+- **API Rate Limiting Implementation Strategies** - DDoS protection and traffic management
+
+### Security Implementation & Best Practices
+- **Encryption and Hashing Best Practices** - Data protection strategies
+- **Zero Trust Security Model** - Modern security architecture
+- **System Reliability and SRE Practices** - Secure operations and monitoring
 
 ---
 

@@ -8,7 +8,7 @@ targetAudience: ['DevOps Engineers', 'System Architects', 'Backend Engineers']
 estimatedReadingTime: 9
 tags: ['service discovery', 'microservices', 'service registry', 'kubernetes']
 featured: false
-relatedTopics: ['microservices-communication-patterns', 'an-introduction-to-kubernetes']
+relatedTopics: ['an-introduction-to-microservices-architecture', 'microservices-communication-patterns', 'choosing-the-right-load-balancer-a-practical-guide', 'kubernetes-cluster-management-and-deployment', 'docker-and-containerization-fundamentals', 'api-gateway-patterns-and-implementation', 'consul-service-discovery-and-configuration', 'nginx-reverse-proxy-and-load-balancing', 'cloud-native-development-patterns', 'dns-and-service-discovery-patterns']
 relatedServices: ['microservices-consulting', 'cloud-native-development']
 meta:
   metaTitle: 'A Guide to Service Discovery in a Microservices Architecture'
@@ -20,17 +20,17 @@ meta:
 
 ## Quick Summary (TL;DR)
 
-In a microservices architecture, service instances are ephemeral and their network locations (IP addresses and ports) change dynamically. **Service discovery** is the mechanism that enables a service to find the current location of another service without hardcoding its address. This is achieved using a central **service registry**. When a service instance starts up, it registers its location with the registry. When another service wants to communicate with it, it queries the registry to get the up-to-date location.
+In a [microservices architecture](/microservices/an-introduction-to-microservices-architecture), service instances are ephemeral... **Service discovery** is the mechanism that enables a service to find the current location of another service without hardcoding its address. This is achieved using a central **service registry**. When a service instance starts up, it registers its location with the registry. When another service wants to communicate with it, it queries the registry to get the up-to-date location.
 
 ## Key Takeaways
 
-- **Services are Ephemeral**: In a modern, containerized environment, service instances are constantly being created, destroyed, and moved. Hardcoding IP addresses is not a viable option.
+- **Services are Ephemeral**: In a modern, [containerized environment](/devops-cloud/docker-containerization-step-by-step), service instances are constantly being created, destroyed, and moved. Hardcoding IP addresses is not a viable option.
 - **The Service Registry is the Source of Truth**: The service registry is a highly available database that contains the real-time network locations of all running service instances. It is the central source of truth for service addresses.
 - **Client-Side vs. Server-Side Discovery**: In **client-side discovery**, the client service is responsible for querying the service registry to get the address of a downstream service and then making the request. In **server-side discovery**, the client makes a request to a router or load balancer, which then queries the registry and forwards the request to an available service instance.
 
 ## The Solution
 
-How does Service A find Service B in a dynamic, distributed environment? The answer is a service registry. This pattern completely decouples services from their physical locations. Instead of knowing where a service _is_, a client only needs to know the service's logical _name_ and where the service registry _is_. This allows for a much more resilient and scalable system. As you add more instances of a service to handle increased load, they simply register themselves, and the load balancer automatically starts routing traffic to them. If an instance dies, it is automatically removed from the registry.
+How does Service A find Service B in a dynamic, distributed environment? The answer is a service registry. This pattern completely decouples services from their physical locations. Instead of knowing where a service _is_, a client only needs to know the service's logical _name_ and where the service registry _is_. This allows for a much more resilient and scalable system. As you add more instances of a service to handle increased load, they simply register themselves, ...and the [load balancer](/system-design/choosing-the-right-load-balancer-a-practical-guide) automatically starts routing traffic to them. If an instance dies, it is automatically removed from the registry.
 
 ## Discovery Patterns
 
@@ -54,7 +54,7 @@ How does Service A find Service B in a dynamic, distributed environment? The ans
 - **Pros**: Abstracts the discovery logic away from the clients. The clients are simpler as they don't need to know about the service registry.
 - **Cons**: The router becomes a highly critical piece of infrastructure that must be managed and scaled.
 
-## Service Discovery in Kubernetes
+## Service Discovery in [Kubernetes](/devops/an-introduction-to-kubernetes)
 
 Kubernetes has a powerful, built-in implementation of **server-side service discovery**. When you create a Kubernetes `Service` object, it automatically gets a stable, internal DNS name. Kubernetes keeps track of the Pods associated with that service and will automatically load balance requests sent to the service's DNS name to one of the healthy Pods. This means that within a Kubernetes cluster, a service can simply make a request to `http://order-service/` without needing to know anything about where the order service is running.
 
@@ -74,8 +74,23 @@ Outside of Kubernetes, popular tools include HashiCorp Consul and Apache Zookeep
 
 ## Related Topics
 
-- [Microservices Communication: Synchronous vs. Asynchronous Patterns](/category/microservices/microservices-communication-patterns)
-- [An Introduction to Kubernetes: Orchestrating Containers at Scale](/category/devops/an-introduction-to-kubernetes)
+### Microservices Architecture & Communication
+- [An Introduction to Microservices Architecture](/topics/an-introduction-to-microservices-architecture)
+- [Microservices Communication Patterns](/topics/microservices-communication-patterns)
+
+### Infrastructure & Containerization
+- [Kubernetes Cluster Management and Deployment](/topics/kubernetes-cluster-management-and-deployment)
+- [Docker and Containerization Fundamentals](/topics/docker-and-containerization-fundamentals)
+- [Cloud Native Development Patterns](/topics/cloud-native-development-patterns)
+
+### Service Discovery & Load Balancing
+- [Choosing the Right Load Balancer: A Practical Guide](/topics/choosing-the-right-load-balancer-a-practical-guide)
+- [Consul Service Discovery and Configuration](/topics/consul-service-discovery-and-configuration)
+- [NGINX Reverse Proxy and Load Balancing](/topics/nginx-reverse-proxy-and-load-balancing)
+- [DNS and Service Discovery Patterns](/topics/dns-and-service-discovery-patterns)
+
+### API Gateway & Routing
+- [API Gateway Patterns and Implementation](/topics/api-gateway-patterns-and-implementation)
 
 ## Need Help With Implementation?
 
