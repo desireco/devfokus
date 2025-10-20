@@ -127,6 +127,18 @@ async function buildPagefindIndex() {
     console.log(`Pagefind index built successfully! Written to ${outputPath}`);
   } catch (error) {
     console.error("Error building pagefind index:", error);
+
+    // Check if this is a platform support issue
+    if (
+      error instanceof Error &&
+      error.message.includes("not yet a supported architecture")
+    ) {
+      console.warn(
+        "Pagefind does not support this platform. Skipping search index build.",
+      );
+      process.exit(0); // Exit successfully so build can continue
+    }
+
     process.exit(1);
   }
 }

@@ -78,7 +78,6 @@ export default defineConfig({
             if (id.includes("animejs")) {
               return "animation";
             }
-
           },
         },
       },

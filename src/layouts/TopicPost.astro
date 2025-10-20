@@ -56,7 +56,10 @@ function getDifficultyColor(difficulty?: string) {
 
 const readingTime = getReadingTime(estimatedReadingTime, readTime);
 const hasPrerequisites = prerequisites && prerequisites.length > 0;
-const hasRelatedContent = relatedTopics.length > 0 || relatedPosts.length > 0 || relatedCategories.length > 0;
+const hasRelatedContent =
+  relatedTopics.length > 0 ||
+  relatedPosts.length > 0 ||
+  relatedCategories.length > 0;
 ---
 
 <MainLayout

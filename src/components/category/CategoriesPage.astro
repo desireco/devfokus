@@ -17,7 +17,14 @@ interface Props {
   targetAudience?: string | null;
 }
 
-const { categories, allTags, targetAudienceList, tag, featured, targetAudience } = Astro.props;
+const {
+  categories,
+  allTags,
+  targetAudienceList,
+  tag,
+  featured,
+  targetAudience,
+} = Astro.props;
 
 // Sort categories: featured first, then by order, then alphabetically
 const sortedCategories = categories.sort((a, b) => {
@@ -36,8 +43,8 @@ const sortedCategories = categories.sort((a, b) => {
   return a.title.localeCompare(b.title);
 });
 
-const featuredCategories = sortedCategories.filter(cat => cat.featured);
-const regularCategories = sortedCategories.filter(cat => !cat.featured);
+const featuredCategories = sortedCategories.filter((cat) => cat.featured);
+const regularCategories = sortedCategories.filter((cat) => !cat.featured);
 ---
 
 <div>

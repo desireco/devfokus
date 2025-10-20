@@ -1,15 +1,15 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
+import CategoryCard from "@/components/category/CategoryCard.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
 import ContentNavigation from "@/components/navigation/ContentNavigation.astro";
 import ShareButtons from "@/components/ShareButtons.astro";
 import TagFilter from "@/components/TagFilter.astro";
 import { SITE_TITLE } from "@/consts";
+import MainLayout from "@/layouts/MainLayout.astro";
 import { getAdjacentContent } from "@/lib/navigation";
-import FormattedDate from "../components/FormattedDate.astro";
-import CategoryCard from "../components/category/CategoryCard.astro";
-import "../styles/article.css";
-import MainLayout from "./MainLayout.astro";
+import "@/styles/article.css";
 
 type Props = CollectionEntry<"categories">["data"] & { id: string };
 
@@ -38,22 +38,24 @@ const adjacentContent = getAdjacentContent(allCategories, id);
 
 // Get all topics for this category
 const allTopics = await getCollection("topics");
-const categoryTopics = allTopics.filter(topic => topic.data.category === title);
+const categoryTopics = allTopics.filter(
+  (topic) => topic.data.category === title,
+);
 
 function getCategoryBackground(color?: string) {
   if (!color) return "from-slate-600 to-slate-700";
 
   const colorMap: Record<string, string> = {
-    "emerald": "from-emerald-500 to-emerald-700",
+    emerald: "from-emerald-500 to-emerald-700",
 
-    "purple": "from-purple-500 to-purple-700",
-    "pink": "from-pink-500 to-pink-700",
-    "amber": "from-amber-500 to-amber-700",
-    "red": "from-red-500 to-red-700",
-    "green": "from-green-500 to-green-700",
-    "teal": "from-teal-500 to-teal-700",
-    "indigo": "from-indigo-500 to-indigo-700",
-    "orange": "from-orange-500 to-orange-700",
+    purple: "from-purple-500 to-purple-700",
+    pink: "from-pink-500 to-pink-700",
+    amber: "from-amber-500 to-amber-700",
+    red: "from-red-500 to-red-700",
+    green: "from-green-500 to-green-700",
+    teal: "from-teal-500 to-teal-700",
+    indigo: "from-indigo-500 to-indigo-700",
+    orange: "from-orange-500 to-orange-700",
   };
 
   return colorMap[color] || "from-slate-600 to-slate-700";
@@ -61,10 +63,10 @@ function getCategoryBackground(color?: string) {
 
 function formatIcon(icon: string) {
   // Check if icon already contains SVG wrapper
-  if (icon.includes('<svg')) {
+  if (icon.includes("<svg")) {
     return icon;
   }
-  
+
   // Wrap path data with SVG element
   return `<svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full"><path d="${icon}"/></svg>`;
 }

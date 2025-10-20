@@ -46,7 +46,8 @@ export interface SlideTheme {
 }
 
 export const SITE_TITLE = "devFokus";
-export const SITE_DESCRIPTION = "devFokus — Comprehensive developer portal with in-depth tutorials, guides, and resources for modern web development, mobile apps, DevOps, and software architecture. Learn React, TypeScript, Node.js, Docker, and more.";
+export const SITE_DESCRIPTION =
+  "devFokus — Comprehensive developer portal with in-depth tutorials, guides, and resources for modern web development, mobile apps, DevOps, and software architecture. Learn React, TypeScript, Node.js, Docker, and more.";
 
 export const PROD_URL = "https://www.devfokus.com";
 

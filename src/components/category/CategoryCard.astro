@@ -32,16 +32,16 @@ function getCategoryBackground(color?: string) {
 
   // Create gradient based on color
   const colorMap: Record<string, string> = {
-    "emerald": "from-emerald-500 to-emerald-700",
-    "blue": "from-blue-500 to-blue-700",
-    "purple": "from-purple-500 to-purple-700",
-    "pink": "from-pink-500 to-pink-700",
-    "amber": "from-amber-500 to-amber-700",
-    "red": "from-red-500 to-red-700",
-    "green": "from-green-500 to-green-700",
-    "teal": "from-teal-500 to-teal-700",
-    "indigo": "from-indigo-500 to-indigo-700",
-    "orange": "from-orange-500 to-orange-700",
+    emerald: "from-emerald-500 to-emerald-700",
+    blue: "from-blue-500 to-blue-700",
+    purple: "from-purple-500 to-purple-700",
+    pink: "from-pink-500 to-pink-700",
+    amber: "from-amber-500 to-amber-700",
+    red: "from-red-500 to-red-700",
+    green: "from-green-500 to-green-700",
+    teal: "from-teal-500 to-teal-700",
+    indigo: "from-indigo-500 to-indigo-700",
+    orange: "from-orange-500 to-orange-700",
   };
 
   return colorMap[color] || "from-slate-600 to-slate-700";
@@ -49,10 +49,10 @@ function getCategoryBackground(color?: string) {
 
 function formatIcon(icon: string): string {
   // Check if the icon already contains an SVG wrapper
-  if (icon.includes('<svg')) {
+  if (icon.includes("<svg")) {
     return icon;
   }
-  
+
   // If it's just path data, wrap it in an SVG element with proper path element
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full">
     <path d="${icon}"/>
@@ -69,8 +69,10 @@ function formatDate(date?: Date | string) {
   });
 }
 
-const hasFeaturedTopics = category.featuredTopics && category.featuredTopics.length > 0;
-const hasRelatedCategories = category.relatedCategories && category.relatedCategories.length > 0;
+const hasFeaturedTopics =
+  category.featuredTopics && category.featuredTopics.length > 0;
+const hasRelatedCategories =
+  category.relatedCategories && category.relatedCategories.length > 0;
 ---
 
 <div class="relative overflow-hidden bg-slate-900/50 border border-slate-700 pt-0 gap-0 w-full flex flex-col cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 rounded-lg">
@@ -115,14 +117,14 @@ const hasRelatedCategories = category.relatedCategories && category.relatedCateg
             Featured Topics:
           </div>
           <div class="flex flex-wrap gap-1">
-            {category.featuredTopics.slice(0, 3).map((topic) => (
+            {category.featuredTopics!.slice(0, 3).map((topic) => (
               <span class="px-2 py-1 text-xs bg-slate-700 text-slate-300 rounded">
                 {topic}
               </span>
             ))}
-            {category.featuredTopics.length > 3 && (
+            {category.featuredTopics!.length > 3 && (
               <span class="px-2 py-1 text-xs text-slate-500">
-                +{category.featuredTopics.length - 3} more
+                +{category.featuredTopics!.length - 3} more
               </span>
             )}
           </div>
@@ -153,8 +155,8 @@ const hasRelatedCategories = category.relatedCategories && category.relatedCateg
       {/* Related Categories */}
       {hasRelatedCategories && (
         <div class="text-xs text-slate-500">
-          Related: {category.relatedCategories.slice(0, 2).join(", ")}
-          {category.relatedCategories.length > 2 && ` +${category.relatedCategories.length - 2}`}
+          Related: {category.relatedCategories!.slice(0, 2).join(", ")}
+          {category.relatedCategories!.length > 2 && ` +${category.relatedCategories!.length - 2}`}
         </div>
       )}
     </div>
